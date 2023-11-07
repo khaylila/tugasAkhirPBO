@@ -5,8 +5,10 @@
 package Database;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,13 +16,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
  *
- * @author milea
+ * @author saintek11
  */
 @Entity
 @Table(name = "users")
@@ -31,7 +34,8 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Users.findByFullname", query = "SELECT u FROM Users u WHERE u.fullname = :fullname"),
     @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
     @NamedQuery(name = "Users.findByCreatedAt", query = "SELECT u FROM Users u WHERE u.createdAt = :createdAt"),
-    @NamedQuery(name = "Users.findByUpdatedAt", query = "SELECT u FROM Users u WHERE u.updatedAt = :updatedAt")})
+    @NamedQuery(name = "Users.findByUpdatedAt", query = "SELECT u FROM Users u WHERE u.updatedAt = :updatedAt"),
+    @NamedQuery(name = "Users.findByRoles", query = "SELECT u FROM Users u WHERE u.roles = :roles")})
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,12 +53,19 @@ public class Users implements Serializable {
     @Basic(optional = false)
     @Column(name = "password")
     private String password;
+    @Basic(optional = false)
     @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
+    @Basic(optional = false)
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+    @Basic(optional = false)
+    @Column(name = "roles")
+    private String roles;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<Log> logCollection;
 
     public Users() {
     }
@@ -63,11 +74,14 @@ public class Users implements Serializable {
         this.userId = userId;
     }
 
-    public Users(Integer userId, String username, String fullname, String password) {
+    public Users(Integer userId, String username, String fullname, String password, Date createdAt, Date updatedAt, String roles) {
         this.userId = userId;
         this.username = username;
         this.fullname = fullname;
         this.password = password;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.roles = roles;
     }
 
     public Integer getUserId() {
@@ -116,6 +130,22 @@ public class Users implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public Collection<Log> getLogCollection() {
+        return logCollection;
+    }
+
+    public void setLogCollection(Collection<Log> logCollection) {
+        this.logCollection = logCollection;
     }
 
     @Override

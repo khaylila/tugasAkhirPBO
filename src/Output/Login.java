@@ -4,6 +4,14 @@
  */
 package Output;
 
+import Database.Users;
+import Database.Users_;
+import java.util.Date;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  *
  * @author milea
@@ -14,7 +22,35 @@ public class Login extends javax.swing.JFrame {
      * Creates new form Tampilan
      */
     public Login() {
+//        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+//        try {
+//            Date time = new Date("yyyy-MM-dd HH:mm:ss");
+//            System.out.println(time);
+//            String password = BCrypt.hashpw("2016", BCrypt.gensalt(12));
+//
+//            entityManager.getTransaction().begin();
+//            Users user = new Users();
+//            user.setFullname("Mochamad Roiyan");
+//            user.setUsername("khaylila");
+//            user.setPassword(password);
+////            user.setPassword("2016");
+//            user.setRoles("admin");
+////            user.setCreatedAt(time);
+////            user.setUpdatedAt(time);
+//            entityManager.persist(user);
+//            entityManager.getTransaction().commit();
+//            this.peringatan("Tambah data berhasil");
+////            System.out.println("berhasil");
+//        } catch (Exception e) {
+//            this.peringatan("Tambah data gagal. Pesan: " + e.getMessage());
+////            System.out.println("gagal tambah data" + e.getMessage());
+//        }
+//        entityManager.close();
         initComponents();
+    }
+
+    public void peringatan(String pesan) {
+        JOptionPane.showMessageDialog(rootPane, pesan);
     }
 
     /**
@@ -46,7 +82,18 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        inputPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputPasswordActionPerformed(evt);
+            }
+        });
+
         jButton1.setText("Login");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Liberation Sans", 1, 48)); // NOI18N
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/logo.png"))); // NOI18N
@@ -100,6 +147,23 @@ public class Login extends javax.swing.JFrame {
     private void inputUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputUsernameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_inputUsernameActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        if (inputUsername.getText().trim().equals("") && inputPassword.getText().trim().equals("")) {
+            this.peringatan("Username / Password tidak boleh kosong.");
+        } else {
+            EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+            
+            entityManager.createQuery("SELECT u FROM users u WHERE u.username = :username");
+//            query.setParameter("username", user);
+            entityManager.close();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void inputPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputPasswordActionPerformed
 
     /**
      * @param args the command line arguments
