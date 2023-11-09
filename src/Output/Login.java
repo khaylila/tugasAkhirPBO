@@ -5,7 +5,6 @@
 package Output;
 
 import Database.Users;
-import Database.Users_;
 import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
