@@ -4,6 +4,14 @@
  */
 package Output;
 
+import Database.Users;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.swing.JOptionPane;
+import org.mindrot.jbcrypt.BCrypt;
+
 /**
  *
  * @author Saintek18
@@ -18,8 +26,12 @@ public class FormLogin extends javax.swing.JFrame {
     public FormLogin() {
         initComponents();
     }
-    
-    private String passwordToString (char[] password){
+
+    public void peringatan(String pesan) {
+        JOptionPane.showMessageDialog(rootPane, pesan);
+    }
+
+    private String passwordToString(char[] password) {
         return (new String(password));
     }
 
@@ -43,7 +55,6 @@ public class FormLogin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(800, 400));
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
                 formMouseDragged(evt);
@@ -95,10 +106,10 @@ public class FormLogin extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jLabel1.setText("Login Page");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         jLabel3.setText("SI BUKU");
 
         inputPassword.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -176,6 +187,7 @@ public class FormLogin extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
@@ -198,6 +210,28 @@ public class FormLogin extends javax.swing.JFrame {
 
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
         // TODO add your handling code here:
+        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+        entityManager.getTransaction().begin();
+        TypedQuery<Users> queryGetUsername = entityManager.createNamedQuery("Users.findByUsername", Users.class);
+        queryGetUsername.setParameter("username", inputUsername.getText().trim());
+        List<Users> results = queryGetUsername.getResultList();
+
+        if (inputUsername.getText().equals("") || new String(inputPassword.getPassword()).equals("")) {
+            this.peringatan("Username/Password tidak boleh kosong!");
+        } else if (results.isEmpty()) {
+            this.peringatan("Username/password tidak ditemukan!");
+        } else {
+            for (Users data : results) {
+                if (BCrypt.checkpw(this.passwordToString(inputPassword.getPassword()), data.getPassword())) {
+                    this.peringatan("berhasil login!");
+                } else {
+                    this.peringatan("Username/password tidak ditemukan!");
+                }
+            }
+        }
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void inputUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputUsernameActionPerformed

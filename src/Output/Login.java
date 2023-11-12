@@ -23,8 +23,8 @@ public class Login extends javax.swing.JFrame {
     public Login() {
 //        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
 //        try {
-            Date time = new Date();
-            this.peringatan(String.valueOf(time));
+//            Date time = new Date();
+//            this.peringatan(String.valueOf(time));
 
 //            String password = BCrypt.hashpw("2016", BCrypt.gensalt(12));
 //

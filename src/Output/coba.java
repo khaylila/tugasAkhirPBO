@@ -4,15 +4,21 @@
  */
 package Output;
 
+import Database.Users;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author milea
  */
 public class coba {
+
     public static void main(String[] args) {
 //        LocalDateTime myDateObj = LocalDateTime.now();
 //        System.out.println(myDateObj);
@@ -21,5 +27,27 @@ public class coba {
 //        Date asdf = new Date();
 //        asdf
 //        System.out.println(String.valueOf(asdf.));
+        Date time = new Date();
+
+        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+        try {
+            String password = BCrypt.hashpw("2016", BCrypt.gensalt(12));
+
+            entityManager.getTransaction().begin();
+            Users user = new Users();
+            user.setFullname("Mochamad Roiyan");
+            user.setUsername("khaylila");
+            user.setPassword(password);
+            user.setRoles("admin");
+
+            user.setCreatedAt(time);
+            user.setUpdatedAt(time);
+            entityManager.persist(user);
+            entityManager.getTransaction().commit();
+            System.out.println("berhasil");
+        } catch (Exception e) {
+            System.out.println("gagal tambah data" + e.getMessage());
+        }
+        entityManager.close();
     }
 }
