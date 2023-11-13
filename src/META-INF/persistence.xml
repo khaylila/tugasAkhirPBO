@@ -8,10 +8,10 @@
     <class>Database.Log</class>
     <class>Database.Pengarang</class>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://103.16.116.143:5432/si_buku"/>
-      <property name="javax.persistence.jdbc.user" value="milea"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/perpustakaan"/>
+      <property name="javax.persistence.jdbc.user" value="postgres"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="Surabaya123"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
     </properties>
   </persistence-unit>
 </persistence>

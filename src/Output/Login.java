@@ -5,7 +5,6 @@
 package Output;
 
 import Database.Users;
-import Database.Users_;
 import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -25,8 +24,9 @@ public class Login extends javax.swing.JFrame {
     public Login() {
 //        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
 //        try {
-//            Date time = new Date("yyyy-MM-dd HH:mm:ss");
-//            System.out.println(time);
+//            Date time = new Date();
+//            this.peringatan(String.valueOf(time));
+
 //            String password = BCrypt.hashpw("2016", BCrypt.gensalt(12));
 //
 //            entityManager.getTransaction().begin();
@@ -36,18 +36,22 @@ public class Login extends javax.swing.JFrame {
 //            user.setPassword(password);
 ////            user.setPassword("2016");
 //            user.setRoles("admin");
-////            user.setCreatedAt(time);
-////            user.setUpdatedAt(time);
+//            System.out.println(String.valueOf(time));
+//            System.out.println(String.valueOf(time));
+//            System.out.println(String.valueOf(time));
+//
+//            user.setCreatedAt(time);
+//            user.setUpdatedAt(time);
 //            entityManager.persist(user);
 //            entityManager.getTransaction().commit();
 //            this.peringatan("Tambah data berhasil");
 ////            System.out.println("berhasil");
 //        } catch (Exception e) {
-//            this.peringatan("Tambah data gagal. Pesan: " + e.getMessage());
+//            this.peringatan("Tambah data gagal. Pesan: " + String.valueOf(e));
 ////            System.out.println("gagal tambah data" + e.getMessage());
 //        }
 //        entityManager.close();
-        initComponents();
+//        initComponents();
     }
 
     public void peringatan(String pesan) {
@@ -155,7 +159,6 @@ public class Login extends javax.swing.JFrame {
             this.peringatan("Username / Password tidak boleh kosong.");
         } else {
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
-            
             Query query = entityManager.createQuery("SELECT u FROM users u WHERE u.username = :username");
             query.setParameter("username", inputUsername.getText());
             entityManager.close();
