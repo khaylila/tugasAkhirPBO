@@ -9,6 +9,7 @@ import Database.Users_;
 import java.util.Date;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.JOptionPane;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -155,8 +156,8 @@ public class Login extends javax.swing.JFrame {
         } else {
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             
-            entityManager.createQuery("SELECT u FROM users u WHERE u.username = :username");
-//            query.setParameter("username", user);
+            Query query = entityManager.createQuery("SELECT u FROM users u WHERE u.username = :username");
+            query.setParameter("username", inputUsername.getText());
             entityManager.close();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
