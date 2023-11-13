@@ -33,7 +33,10 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Tesis.findByJumlahHalaman", query = "SELECT t FROM Tesis t WHERE t.jumlahHalaman = :jumlahHalaman"),
     @NamedQuery(name = "Tesis.findByCreatedAt", query = "SELECT t FROM Tesis t WHERE t.createdAt = :createdAt"),
     @NamedQuery(name = "Tesis.findByUpdatedAt", query = "SELECT t FROM Tesis t WHERE t.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Tesis.findByTesisId", query = "SELECT t FROM Tesis t WHERE t.tesisId = :tesisId")})
+    @NamedQuery(name = "Tesis.findByTesisId", query = "SELECT t FROM Tesis t WHERE t.tesisId = :tesisId"),
+    @NamedQuery(name = "Tesis.findLastById", query = "SELECT t FROM Tesis t ORDER BY t.tesisId DESC"),
+    @NamedQuery(name = "Tesis.findByJudulLike", query = "SELECT t FROM Tesis t WHERE UPPER(t.judul) LIKE UPPER(:judul)")})
+//    @NamedQuery(name = "Books.findByPengarangLike", query = "SELECT b FROM Books JOIN Pengarang b WHERE UPPER(b.judul) LIKE UPPER(:judul)")})
 public class Tesis implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -168,5 +171,5 @@ public class Tesis implements Serializable {
     public String toString() {
         return "Database.Tesis[ tesisId=" + tesisId + " ]";
     }
-    
+
 }

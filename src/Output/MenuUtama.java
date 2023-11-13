@@ -6,6 +6,7 @@ package Output;
 
 import View.PanelBuku;
 import View.PanelBukuNew;
+import View.PanelSkripsi;
 
 /**
  *
@@ -135,6 +136,11 @@ public class MenuUtama extends javax.swing.JFrame {
         );
 
         btnThesis.setBackground(new java.awt.Color(250, 204, 21));
+        btnThesis.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnThesisMouseClicked(evt);
+            }
+        });
 
         menuDashboard2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         menuDashboard2.setForeground(new java.awt.Color(255, 255, 255));
@@ -268,7 +274,7 @@ public class MenuUtama extends javax.swing.JFrame {
                 .addComponent(btnUserManagement, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnLog, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         getContentPane().add(panelSidebar, java.awt.BorderLayout.LINE_START);
@@ -330,6 +336,14 @@ public class MenuUtama extends javax.swing.JFrame {
         panelMainCode.repaint();
         panelMainCode.revalidate();
     }//GEN-LAST:event_btnBooksMouseClicked
+
+    private void btnThesisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThesisMouseClicked
+        // TODO add your handling code here:
+        panelMainCode.removeAll();
+        panelMainCode.add(new PanelSkripsi());
+        panelMainCode.repaint();
+        panelMainCode.revalidate();
+    }//GEN-LAST:event_btnThesisMouseClicked
 
     /**
      * @param args the command line arguments

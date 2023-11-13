@@ -6,6 +6,7 @@ package View;
 
 import Database.Books;
 import Database.Pengarang;
+import Database.Tesis;
 import java.awt.event.KeyEvent;
 import java.util.Date;
 import java.util.List;
@@ -20,14 +21,14 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author milea
  */
-public class PanelBukuNew extends javax.swing.JPanel {
+public class PanelSkripsi extends javax.swing.JPanel {
 
     int id;
 
     /**
      * Creates new form panelBuku
      */
-    public PanelBukuNew() {
+    public PanelSkripsi() {
         initComponents();
         tampil();
     }
@@ -43,18 +44,15 @@ public class PanelBukuNew extends javax.swing.JPanel {
 
         panelAdd = new javax.swing.JPanel();
         btnInsert = new javax.swing.JButton();
-        inputISBN = new javax.swing.JTextField();
         inputJudul = new javax.swing.JTextField();
-        inputSubJudul = new javax.swing.JTextField();
         inputPengarang = new javax.swing.JTextField();
         inputJumlahHalaman = new javax.swing.JTextField();
-        inputPenerbit = new javax.swing.JTextField();
         inputTahunTerbit = new javax.swing.JTextField();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         inputPencarian = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelBuku = new javax.swing.JTable();
+        tabelSkripsi = new javax.swing.JTable();
         btnPrint = new javax.swing.JButton();
         inputTipeSearch = new javax.swing.JComboBox<>();
 
@@ -74,22 +72,11 @@ public class PanelBukuNew extends javax.swing.JPanel {
             }
         });
 
-        inputISBN.setText("Nomor ISBN");
-
         inputJudul.setText("Judul Buku");
 
-        inputSubJudul.setText("Sub Judul (Optional)");
-        inputSubJudul.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputSubJudulActionPerformed(evt);
-            }
-        });
-
-        inputPengarang.setText("Pengarang (Pisahkan dengan koma)");
+        inputPengarang.setText("Pengarang");
 
         inputJumlahHalaman.setText("Jumlah Halaman");
-
-        inputPenerbit.setText("Penerbit");
 
         inputTahunTerbit.setText("Tahun Terbit");
 
@@ -119,7 +106,7 @@ public class PanelBukuNew extends javax.swing.JPanel {
             }
         });
 
-        tabelBuku.setModel(new javax.swing.table.DefaultTableModel(
+        tabelSkripsi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -127,11 +114,11 @@ public class PanelBukuNew extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "No", "ISBN", "Judul", "Penerbit", "Thn Terbit", "Dibuat Tgl"
+                "No", "Judul", "Thn Terbit", "Pengarang", "Jumlah Halaman", "Dibuat Tgl"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -145,13 +132,13 @@ public class PanelBukuNew extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tabelBuku.setShowGrid(false);
-        tabelBuku.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabelSkripsi.setShowGrid(false);
+        tabelSkripsi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelBukuMouseClicked(evt);
+                tabelSkripsiMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tabelBuku);
+        jScrollPane1.setViewportView(tabelSkripsi);
 
         btnPrint.setBackground(new java.awt.Color(250, 204, 21));
         btnPrint.setForeground(new java.awt.Color(255, 255, 255));
@@ -162,7 +149,7 @@ public class PanelBukuNew extends javax.swing.JPanel {
             }
         });
 
-        inputTipeSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Judul", "ISBN", "Penerbit", "Pengarang", "Tahun Terbit" }));
+        inputTipeSearch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Judul", "Pengarang", "Tahun Terbit" }));
 
         javax.swing.GroupLayout panelAddLayout = new javax.swing.GroupLayout(panelAdd);
         panelAdd.setLayout(panelAddLayout);
@@ -170,33 +157,28 @@ public class PanelBukuNew extends javax.swing.JPanel {
             panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAddLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelAddLayout.createSequentialGroup()
-                        .addComponent(btnInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnInsert, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDelete)
+                        .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnPrint)
+                        .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(42, 42, 42)
-                        .addComponent(inputTipeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(inputTipeSearch, 0, 64, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputPencarian))
+                        .addComponent(inputPencarian, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
                     .addGroup(panelAddLayout.createSequentialGroup()
-                        .addComponent(inputISBN, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(inputJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(inputSubJudul)
-                    .addGroup(panelAddLayout.createSequentialGroup()
-                        .addComponent(inputPengarang, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(inputJudul, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(inputPengarang, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(inputJumlahHalaman, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelAddLayout.createSequentialGroup()
-                        .addComponent(inputPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(inputTahunTerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
+                        .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(inputJumlahHalaman, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                            .addComponent(inputTahunTerbit, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))))
                 .addGap(20, 20, 20))
         );
         panelAddLayout.setVerticalGroup(
@@ -204,17 +186,11 @@ public class PanelBukuNew extends javax.swing.JPanel {
             .addGroup(panelAddLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inputISBN, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(inputJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(inputSubJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inputPengarang, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inputJumlahHalaman, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inputPenerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inputPengarang, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(inputTahunTerbit, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelAddLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -225,7 +201,7 @@ public class PanelBukuNew extends javax.swing.JPanel {
                     .addComponent(btnPrint)
                     .addComponent(inputTipeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -235,18 +211,21 @@ public class PanelBukuNew extends javax.swing.JPanel {
     private void tampil() {
         EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
         entityManager.getTransaction().begin();
-        TypedQuery<Books> querySelectAll = entityManager.createNamedQuery("Books.findAll", Books.class);
-        List<Books> results = querySelectAll.getResultList();
+        TypedQuery<Tesis> querySelectAll = entityManager.createNamedQuery("Tesis.findAll", Tesis.class);
+        List<Tesis> results = querySelectAll.getResultList();
 
-        DefaultTableModel model = (DefaultTableModel) tabelBuku.getModel();
+        DefaultTableModel model = (DefaultTableModel) tabelSkripsi.getModel();
         model.setRowCount(0);
-        for (Books data : results) {
+        for (Tesis data : results) {
+            TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByTesisId", Pengarang.class);
+            queryGetPengarang.setParameter("tesisId", data);
+            Pengarang pgr = queryGetPengarang.getSingleResult();
             Object[] baris = new Object[6];
-            baris[0] = data.getBookId();
-            baris[1] = data.getIsbn();
-            baris[2] = data.getJudul();
-            baris[3] = data.getPenerbit();
-            baris[4] = data.getTahunTerbit();
+            baris[0] = data.getTesisId();
+            baris[1] = data.getJudul();
+            baris[2] = data.getTahunTerbit();
+            baris[3] = pgr.getName();
+            baris[4] = data.getJumlahHalaman();
             baris[5] = data.getCreatedAt();
             model.addRow(baris);
         }
@@ -259,57 +238,48 @@ public class PanelBukuNew extends javax.swing.JPanel {
     }
 
     private void resetField() {
-        inputISBN.setText("Nomor ISBN");
-        inputJudul.setText("Judul Buku");
-        inputSubJudul.setText("Sub Judul (Optional)");
-        inputPengarang.setText("Pengarang (Pisahkan dengan koma)");
+        inputJudul.setText("Judul Skripsi");
+        inputPengarang.setText("Pengarang");
         inputJumlahHalaman.setText("Jumlah Halaman");
-        inputPenerbit.setText("Penerbit");
         inputTahunTerbit.setText("Tahun Terbit");
 
     }
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
         // TODO add your handling code here:
-        String isbn = inputISBN.getText();
         String judul = inputJudul.getText();
-        String subJudul = inputSubJudul.getText();
         String pengarang = inputPengarang.getText();
         int jumlahHalaman = Integer.parseInt(inputJumlahHalaman.getText());
-        String penerbit = inputPenerbit.getText();
         int tahunTerbit = Integer.parseInt(inputTahunTerbit.getText());
 //        Date time = new Date();
 
-        if (!isbn.isEmpty() && !judul.isEmpty() && !penerbit.isEmpty() && !pengarang.isEmpty() && tahunTerbit > 0 && jumlahHalaman > 0) {
+        if (!judul.isEmpty() && !pengarang.isEmpty() && tahunTerbit > 0 && jumlahHalaman > 0) {
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             try {
                 entityManager.getTransaction().begin();
-                Books daftarBuku = new Books();
-                daftarBuku.setIsbn(isbn);
-                daftarBuku.setJudul(judul);
-                if (!subJudul.equals("Sub Judul (Optional)")) {
-                    daftarBuku.setSubJudul(subJudul);
-                }
-                daftarBuku.setJumlahHalaman(jumlahHalaman);
-                daftarBuku.setPenerbit(penerbit);
-                daftarBuku.setTahunTerbit(tahunTerbit);
-//                daftarBuku.setCreatedAt(time);
-//                daftarBuku.setUpdatedAt(time);
-                entityManager.persist(daftarBuku);
+                Tesis skripsi = new Tesis();
+                skripsi.setJudul(judul);
+                skripsi.setJumlahHalaman(jumlahHalaman);
+                skripsi.setTahunTerbit(tahunTerbit);
+//                skripsi.setCreatedAt(time);
+//                skripsi.setUpdatedAt(time);
+                entityManager.persist(skripsi);
 
-                TypedQuery<Books> query = entityManager.createNamedQuery("Books.findLastById", Books.class);
-                Books bookLastId = query.setMaxResults(1).getSingleResult();
-                String[] pengarangs = pengarang.split(",");
-                for (String pgr : pengarangs) {
-                    Pengarang tbPengarang = new Pengarang();
-                    tbPengarang.setBookId(bookLastId);
-                    tbPengarang.setName(pgr.trim());
-                    entityManager.persist(tbPengarang);
-                }
+                TypedQuery<Tesis> query = entityManager.createNamedQuery("Tesis.findLastById", Tesis.class);
+                Tesis skripsiLastId = query.setMaxResults(1).getSingleResult();
+
+                Pengarang tbPengarang = new Pengarang();
+                tbPengarang.setTesisId(skripsiLastId);
+                tbPengarang.setName(pengarang.trim());
+                entityManager.persist(tbPengarang);
+
+//              begin log
+//              endlog
                 entityManager.getTransaction().commit();
 
                 this.peringatan("Berhasil menambahkan data!");
             } catch (Exception e) {
+                entityManager.getTransaction().rollback();
                 this.peringatan("Tambah data gagal. Pesan: " + e.getMessage());
             }
             entityManager.close();
@@ -323,48 +293,33 @@ public class PanelBukuNew extends javax.swing.JPanel {
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         // TODO add your handling code here:
         if (this.id != 0) {
-            String isbn = inputISBN.getText();
             String judul = inputJudul.getText();
-            String subJudul = inputSubJudul.getText();
             String pengarang = inputPengarang.getText();
             int jumlahHalaman = Integer.parseInt(inputJumlahHalaman.getText());
-            String penerbit = inputPenerbit.getText();
             int tahunTerbit = Integer.parseInt(inputTahunTerbit.getText());
-//            Date time = new Date();
-            if (!isbn.isEmpty() && !judul.isEmpty() && !penerbit.isEmpty() && !pengarang.isEmpty() && tahunTerbit > 0 && jumlahHalaman > 0) {
+            Date time = new Date();
+            if (!judul.isEmpty() && !pengarang.isEmpty() && tahunTerbit > 0 && jumlahHalaman > 0) {
                 EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
                 try {
                     entityManager.getTransaction().begin();
-                    TypedQuery<Books> query = entityManager.createNamedQuery("Books.findByBookId", Books.class);
-                    query.setParameter("bookId", this.id);
-                    Books book = query.setMaxResults(1).getSingleResult();
+                    TypedQuery<Tesis> query = entityManager.createNamedQuery("Tesis.findByTesisId", Tesis.class);
+                    query.setParameter("tesisId", this.id);
+                    Tesis tesis = query.setMaxResults(1).getSingleResult();
+                    
+                    tesis.setJudul(judul);
+                    tesis.setJumlahHalaman(jumlahHalaman);
+                    tesis.setTahunTerbit(tahunTerbit);
+//                    daftarSkripsi.setCreatedAt(time);
+//                    daftarSkripsi.setUpdatedAt(time);
+                    entityManager.merge(tesis);
 
-                    book.setIsbn(isbn);
-                    book.setJudul(judul);
-                    if (!subJudul.equals("Sub Judul (Optional)")) {
-                        book.setSubJudul(subJudul);
-                    }
-                    book.setJumlahHalaman(jumlahHalaman);
-                    book.setPenerbit(penerbit);
-                    book.setTahunTerbit(tahunTerbit);
-//                    daftarBuku.setCreatedAt(time);
-//                    daftarBuku.setUpdatedAt(time);
-                    entityManager.merge(book);
+                    TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByTesisId", Pengarang.class);
+                    queryGetPengarang.setParameter("tesisId", tesis);
+                    Pengarang pgr = queryGetPengarang.getSingleResult();
 
-                    TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByBookId", Pengarang.class);
-                    queryGetPengarang.setParameter("bookId", book);
-                    List<Pengarang> pengarangss = queryGetPengarang.getResultList();
-                    for (Pengarang peng : pengarangss) {
-                        entityManager.remove(peng);
-                    }
+                    pgr.setName(pengarang.trim());
+                    entityManager.merge(pgr);
 
-                    String[] pengarangs = pengarang.split(",");
-                    for (String pgr : pengarangs) {
-                        Pengarang tbPengarang = new Pengarang();
-                        tbPengarang.setBookId(book);
-                        tbPengarang.setName(pgr.trim());
-                        entityManager.persist(tbPengarang);
-                    }
                     entityManager.getTransaction().commit();
                     this.peringatan("Berhasil mengubah data!");
                 } catch (Exception e) {
@@ -388,13 +343,14 @@ public class PanelBukuNew extends javax.swing.JPanel {
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             try {
                 entityManager.getTransaction().begin();
-                TypedQuery<Books> query = entityManager.createNamedQuery("Books.findByBookId", Books.class);
-                query.setParameter("bookId", this.id);
-                Books daftarBuku = query.setMaxResults(1).getSingleResult();
-                entityManager.remove(daftarBuku);
+                TypedQuery<Tesis> query = entityManager.createNamedQuery("Tesis.findByTesisId", Tesis.class);
+                query.setParameter("tesisId", this.id);
+                Tesis daftarSkripsi = query.setMaxResults(1).getSingleResult();
+                entityManager.remove(daftarSkripsi);
                 entityManager.getTransaction().commit();
                 this.peringatan("Berhasil menghapus data!");
             } catch (Exception e) {
+                entityManager.getTransaction().rollback();
                 this.peringatan("Gagal menghapus data. Pesan: " + e.getMessage());
             }
             entityManager.close();
@@ -409,11 +365,7 @@ public class PanelBukuNew extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPrintActionPerformed
 
-    private void inputSubJudulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputSubJudulActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputSubJudulActionPerformed
-
-    private void tabelBukuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelBukuMouseClicked
+    private void tabelSkripsiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelSkripsiMouseClicked
         // TODO add your handling code here:
         JTable target = (JTable) evt.getSource();
         int row = target.getSelectedRow();
@@ -421,75 +373,60 @@ public class PanelBukuNew extends javax.swing.JPanel {
 
         EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
         entityManager.getTransaction().begin();
-        TypedQuery<Books> query = entityManager.createNamedQuery("Books.findByBookId", Books.class);
-        query.setParameter("bookId", this.id);
-        Books daftarBuku = query.setMaxResults(1).getSingleResult();
+        TypedQuery<Tesis> query = entityManager.createNamedQuery("Tesis.findByTesisId", Tesis.class);
+        query.setParameter("tesisId", this.id);
+        Tesis daftarSkripsi = query.setMaxResults(1).getSingleResult();
 
-        TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByBookId", Pengarang.class);
-        queryGetPengarang.setParameter("bookId", daftarBuku);
-        List<Pengarang> pengarangs = queryGetPengarang.getResultList();
-        String pengarangLengkap = "";
-
-        System.out.println(pengarangs.size());
-        int i = 1;
-        for (Pengarang pengarang : pengarangs) {
-            pengarangLengkap += pengarang.getName();
-            if (pengarangs.size() > i) {
-                pengarangLengkap += ", ";
-            }
-
-            i++;
-        }
+        TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByTesisId", Pengarang.class);
+        queryGetPengarang.setParameter("tesisId", daftarSkripsi);
+        Pengarang pgr = queryGetPengarang.getSingleResult();
 
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        inputISBN.setText(daftarBuku.getIsbn());
-        inputJudul.setText(daftarBuku.getJudul());
-        inputSubJudul.setText(daftarBuku.getSubJudul());
-        inputPengarang.setText(pengarangLengkap);
-        inputJumlahHalaman.setText(String.valueOf(daftarBuku.getJumlahHalaman()));
-        inputPenerbit.setText(daftarBuku.getPenerbit());
-        inputTahunTerbit.setText(String.valueOf(daftarBuku.getTahunTerbit()));
-    }//GEN-LAST:event_tabelBukuMouseClicked
+        inputJudul.setText(daftarSkripsi.getJudul());
+        inputPengarang.setText(pgr.getName());
+        inputJumlahHalaman.setText(String.valueOf(daftarSkripsi.getJumlahHalaman()));
+        inputTahunTerbit.setText(String.valueOf(daftarSkripsi.getTahunTerbit()));
+    }//GEN-LAST:event_tabelSkripsiMouseClicked
 
     private void inputPencarianKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputPencarianKeyTyped
         // TODO add your handling code here:
         if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
             int selectedIndex = inputTipeSearch.getSelectedIndex();
-            String queryTypeSearch = "Books.findByJudulLike";
+            String queryTypeSearch = "Tesis.findByJudulLike";
             String column = "judul";
             if (selectedIndex == 1) {
-                queryTypeSearch = "Books.findByISBNLike";
+                queryTypeSearch = "Tesis.findByPengarangLike";
                 column = "isbn";
             } else if (selectedIndex == 2) {
-                queryTypeSearch = "Books.findByPenerbitLike";
-                column = "penerbit";
-            } else if (selectedIndex == 4) {
-                queryTypeSearch = "Books.findByTahunTerbit";
+                queryTypeSearch = "Tesis.findByTahunTerbit";
                 column = "tahunTerbit";
             }
             String kataKunci = inputPencarian.getText();
 
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             entityManager.getTransaction().begin();
-            TypedQuery<Books> query = entityManager.createNamedQuery(queryTypeSearch, Books.class);
-            if (selectedIndex == 4) {
+            TypedQuery<Tesis> query = entityManager.createNamedQuery(queryTypeSearch, Tesis.class);
+            if (selectedIndex == 2) {
                 query.setParameter(column, Integer.valueOf(kataKunci));
             } else {
                 query.setParameter(column, "%" + kataKunci + "%");
             }
-            List<Books> results = query.getResultList();
+            List<Tesis> results = query.getResultList();
 
-            DefaultTableModel model = (DefaultTableModel) tabelBuku.getModel();
+            DefaultTableModel model = (DefaultTableModel) tabelSkripsi.getModel();
             model.setRowCount(0);
-            for (Books data : results) {
+            for (Tesis data : results) {
+                TypedQuery<Pengarang> queryGetPengarang = entityManager.createNamedQuery("Pengarang.findNamaByTesisId", Pengarang.class);
+                queryGetPengarang.setParameter("tesisId", data);
+                Pengarang pgr = queryGetPengarang.getSingleResult();
                 Object[] baris = new Object[6];
-                baris[0] = data.getBookId();
-                baris[1] = data.getIsbn();
-                baris[2] = data.getJudul();
-                baris[3] = data.getPenerbit();
-                baris[4] = data.getTahunTerbit();
+                baris[0] = data.getTesisId();
+                baris[1] = data.getJudul();
+                baris[2] = data.getTahunTerbit();
+                baris[3] = pgr.getName();
+                baris[4] = data.getJumlahHalaman();
                 baris[5] = data.getCreatedAt();
                 model.addRow(baris);
             }
@@ -504,17 +441,14 @@ public class PanelBukuNew extends javax.swing.JPanel {
     private javax.swing.JButton btnInsert;
     private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JTextField inputISBN;
     private javax.swing.JTextField inputJudul;
     private javax.swing.JTextField inputJumlahHalaman;
     private javax.swing.JTextField inputPencarian;
-    private javax.swing.JTextField inputPenerbit;
     private javax.swing.JTextField inputPengarang;
-    private javax.swing.JTextField inputSubJudul;
     private javax.swing.JTextField inputTahunTerbit;
     private javax.swing.JComboBox<String> inputTipeSearch;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelAdd;
-    private javax.swing.JTable tabelBuku;
+    private javax.swing.JTable tabelSkripsi;
     // End of variables declaration//GEN-END:variables
 }

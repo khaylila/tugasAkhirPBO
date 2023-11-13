@@ -44,37 +44,32 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="btnInsert" min="-2" pref="73" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnUpdate" min="-2" pref="72" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnDelete" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="btnPrint" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnInsert" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="btnUpdate" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="btnDelete" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="btnPrint" max="32767" attributes="0"/>
                           <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
-                          <Component id="inputTipeSearch" min="-2" pref="64" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="inputPencarian" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="inputISBN" min="-2" pref="160" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="inputJudul" min="-2" pref="406" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="inputSubJudul" alignment="0" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="inputPengarang" min="-2" pref="410" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="inputJumlahHalaman" min="-2" pref="150" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="inputPenerbit" min="-2" pref="410" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="inputTahunTerbit" min="-2" pref="150" max="-2" attributes="0"/>
+                          <Component id="inputTipeSearch" pref="64" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Component id="inputPencarian" pref="159" max="32767" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane1" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="inputJudul" alignment="0" max="32767" attributes="0"/>
+                              <Component id="inputPengarang" alignment="0" pref="410" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="inputJumlahHalaman" pref="150" max="32767" attributes="0"/>
+                              <Component id="inputTahunTerbit" pref="150" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               </Group>
@@ -85,19 +80,12 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="inputISBN" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="inputJudul" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="inputSubJudul" min="-2" pref="30" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="inputPengarang" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="inputJumlahHalaman" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="inputPenerbit" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="inputPengarang" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="inputTahunTerbit" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -110,7 +98,7 @@
                       <Component id="inputTipeSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="115" max="-2" attributes="0"/>
+                  <Component id="jScrollPane1" min="-2" pref="202" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -131,37 +119,19 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnInsertActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JTextField" name="inputISBN">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Nomor ISBN"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JTextField" name="inputJudul">
           <Properties>
             <Property name="text" type="java.lang.String" value="Judul Buku"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="inputSubJudul">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Sub Judul (Optional)"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inputSubJudulActionPerformed"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JTextField" name="inputPengarang">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Pengarang (Pisahkan dengan koma)"/>
+            <Property name="text" type="java.lang.String" value="Pengarang"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="inputJumlahHalaman">
           <Properties>
             <Property name="text" type="java.lang.String" value="Jumlah Halaman"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JTextField" name="inputPenerbit">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Penerbit"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="inputTahunTerbit">
@@ -216,17 +186,51 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JTable" name="tabelBuku">
+            <Component class="javax.swing.JTable" name="tabelSkripsi">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="6" rowCount="4">
                     <Column editable="false" title="No" type="java.lang.Integer"/>
-                    <Column editable="false" title="ISBN" type="java.lang.String"/>
                     <Column editable="false" title="Judul" type="java.lang.String"/>
-                    <Column editable="false" title="Penerbit" type="java.lang.String"/>
                     <Column editable="false" title="Thn Terbit" type="java.lang.Integer"/>
+                    <Column editable="false" title="Pengarang" type="java.lang.String"/>
+                    <Column editable="false" title="Jumlah Halaman" type="java.lang.Integer"/>
                     <Column editable="false" title="Dibuat Tgl" type="java.lang.String"/>
                   </Table>
+                </Property>
+                <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                  <TableColumnModel selectionModel="0">
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                      <Title/>
+                      <Editor/>
+                      <Renderer/>
+                    </Column>
+                  </TableColumnModel>
                 </Property>
                 <Property name="showGrid" type="boolean" value="false"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
@@ -234,7 +238,7 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tabelBukuMouseClicked"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tabelSkripsiMouseClicked"/>
               </Events>
             </Component>
           </SubComponents>
@@ -256,12 +260,10 @@
         <Component class="javax.swing.JComboBox" name="inputTipeSearch">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="5">
+              <StringArray count="3">
                 <StringItem index="0" value="Judul"/>
-                <StringItem index="1" value="ISBN"/>
-                <StringItem index="2" value="Penerbit"/>
-                <StringItem index="3" value="Pengarang"/>
-                <StringItem index="4" value="Tahun Terbit"/>
+                <StringItem index="1" value="Pengarang"/>
+                <StringItem index="2" value="Tahun Terbit"/>
               </StringArray>
             </Property>
           </Properties>
