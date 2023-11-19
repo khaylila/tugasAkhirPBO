@@ -4,18 +4,29 @@
  */
 package View;
 
-import Database.Books;
 import Database.Pengarang;
 import Database.Tesis;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -100,6 +111,11 @@ public class PanelSkripsi extends javax.swing.JPanel {
 
         inputPencarian.setText("Cari Sesuatu");
         inputPencarian.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(250, 204, 21), 1, true));
+        inputPencarian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputPencarianActionPerformed(evt);
+            }
+        });
         inputPencarian.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 inputPencarianKeyTyped(evt);
@@ -108,20 +124,20 @@ public class PanelSkripsi extends javax.swing.JPanel {
 
         tabelSkripsi.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "No", "Judul", "Thn Terbit", "Pengarang", "Jumlah Halaman", "Dibuat Tgl"
+                "No", "Judul", "Thn Terbit", "Pengarang", "Jumlah Halaman"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -226,7 +242,6 @@ public class PanelSkripsi extends javax.swing.JPanel {
             baris[2] = data.getTahunTerbit();
             baris[3] = pgr.getName();
             baris[4] = data.getJumlahHalaman();
-            baris[5] = data.getCreatedAt();
             model.addRow(baris);
         }
         entityManager.getTransaction().commit();
@@ -305,7 +320,7 @@ public class PanelSkripsi extends javax.swing.JPanel {
                     TypedQuery<Tesis> query = entityManager.createNamedQuery("Tesis.findByTesisId", Tesis.class);
                     query.setParameter("tesisId", this.id);
                     Tesis tesis = query.setMaxResults(1).getSingleResult();
-                    
+
                     tesis.setJudul(judul);
                     tesis.setJumlahHalaman(jumlahHalaman);
                     tesis.setTahunTerbit(tahunTerbit);
@@ -363,6 +378,69 @@ public class PanelSkripsi extends javax.swing.JPanel {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
+        int selectedIndex = inputTipeSearch.getSelectedIndex();
+        String queryTypeSearch = "Tesis.findByJudulLike";
+        String column = "judul";
+        String searchBy = "Judul";
+        if (selectedIndex == 2) {
+            queryTypeSearch = "Tesis.findByTahunTerbit";
+            column = "tahunTerbit";
+            searchBy = "Tahun Terbit";
+        }
+        String kataKunci = inputPencarian.getText();
+        if (kataKunci.equalsIgnoreCase("Cari Sesuatu")) {
+            kataKunci = "";
+        }
+
+        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+        entityManager.getTransaction().begin();
+        TypedQuery<Tesis> query;
+        if (selectedIndex == 1) {
+            query = entityManager.createQuery("SELECT t FROM Tesis t JOIN t.pengarangCollection p WHERE UPPER(p.name) LIKE UPPER(:namaPengarang)", Tesis.class);
+            query.setParameter("namaPengarang", "%" + kataKunci + "%");
+            searchBy = "Pengarang";
+        } else {
+            query = entityManager.createNamedQuery(queryTypeSearch, Tesis.class);
+            if (selectedIndex == 2) {
+                query.setParameter(column, Integer.valueOf(kataKunci));
+            } else {
+                query.setParameter(column, "%" + kataKunci + "%");
+            }
+        }
+        List<Tesis> results = query.getResultList();
+        
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        List<HashMap<String, Object>> newResults = new ArrayList<>();
+        for (Tesis tesis : results) {
+            System.out.println(tesis.toString());
+            HashMap<String, Object> hasilTesis = new HashMap<>();
+            hasilTesis.put("judul", tesis.getJudul());
+            String pengarang = "";
+            for (Pengarang pgr : tesis.getPengarangCollection()) {
+                pengarang = pgr.getName();
+            }
+            hasilTesis.put("pengarang", pengarang);
+            hasilTesis.put("tahunTerbit", String.valueOf(tesis.getTahunTerbit()));
+            hasilTesis.put("jumlahHalaman", String.valueOf(tesis.getJumlahHalaman()));
+            newResults.add(hasilTesis);
+        }
+        
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("querySearch", kataKunci);
+        parameters.put("searchBy", searchBy);
+
+        try {
+            String jrxmlFile = new String("src/Report/reportSkripsi.jrxml");
+            JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+            JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(newResults));
+            JasperViewer.viewReport(jp, false);
+        } catch (JRException ex) {
+            Logger.getLogger(PanelSkripsi.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            Logger.getLogger(PanelSkripsi.class.getName()).log(Level.SEVERE, null, e);
+        }
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void tabelSkripsiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelSkripsiMouseClicked
@@ -396,10 +474,11 @@ public class PanelSkripsi extends javax.swing.JPanel {
             int selectedIndex = inputTipeSearch.getSelectedIndex();
             String queryTypeSearch = "Tesis.findByJudulLike";
             String column = "judul";
-            if (selectedIndex == 1) {
-                queryTypeSearch = "Tesis.findByPengarangLike";
-                column = "isbn";
-            } else if (selectedIndex == 2) {
+//            if (selectedIndex == 1) {
+//                queryTypeSearch = "Tesis.findByPengarangLike";
+//                column = "isbn";
+//            } else 
+            if (selectedIndex == 2) {
                 queryTypeSearch = "Tesis.findByTahunTerbit";
                 column = "tahunTerbit";
             }
@@ -407,11 +486,17 @@ public class PanelSkripsi extends javax.swing.JPanel {
 
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             entityManager.getTransaction().begin();
-            TypedQuery<Tesis> query = entityManager.createNamedQuery(queryTypeSearch, Tesis.class);
-            if (selectedIndex == 2) {
-                query.setParameter(column, Integer.valueOf(kataKunci));
+            TypedQuery<Tesis> query;
+            if (selectedIndex == 1) {
+                query = entityManager.createQuery("SELECT t FROM Tesis t JOIN t.pengarangCollection p WHERE UPPER(p.name) LIKE UPPER(:namaPengarang)", Tesis.class);
+                query.setParameter("namaPengarang", "%" + kataKunci + "%");
             } else {
-                query.setParameter(column, "%" + kataKunci + "%");
+                query = entityManager.createNamedQuery(queryTypeSearch, Tesis.class);
+                if (selectedIndex == 2) {
+                    query.setParameter(column, Integer.valueOf(kataKunci));
+                } else {
+                    query.setParameter(column, "%" + kataKunci + "%");
+                }
             }
             List<Tesis> results = query.getResultList();
 
@@ -427,13 +512,16 @@ public class PanelSkripsi extends javax.swing.JPanel {
                 baris[2] = data.getTahunTerbit();
                 baris[3] = pgr.getName();
                 baris[4] = data.getJumlahHalaman();
-                baris[5] = data.getCreatedAt();
                 model.addRow(baris);
             }
             entityManager.getTransaction().commit();
             entityManager.close();
         }
     }//GEN-LAST:event_inputPencarianKeyTyped
+
+    private void inputPencarianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputPencarianActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputPencarianActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

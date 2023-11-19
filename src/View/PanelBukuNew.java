@@ -6,15 +6,28 @@ package View;
 
 import Database.Books;
 import Database.Pengarang;
+import Database.Tesis;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -113,6 +126,11 @@ public class PanelBukuNew extends javax.swing.JPanel {
 
         inputPencarian.setText("Cari Sesuatu");
         inputPencarian.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(250, 204, 21), 1, true));
+        inputPencarian.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputPencarianActionPerformed(evt);
+            }
+        });
         inputPencarian.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 inputPencarianKeyTyped(evt);
@@ -127,11 +145,11 @@ public class PanelBukuNew extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "No", "ISBN", "Judul", "Penerbit", "Thn Terbit", "Dibuat Tgl"
+                "No", "ISBN", "Judul", "Pengarang", "Penerbit", "Thn Terbit"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -235,19 +253,29 @@ public class PanelBukuNew extends javax.swing.JPanel {
     private void tampil() {
         EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
         entityManager.getTransaction().begin();
-        TypedQuery<Books> querySelectAll = entityManager.createNamedQuery("Books.findAll", Books.class);
+        TypedQuery<Books> querySelectAll = entityManager.createQuery("SELECT DISTINCT b FROM Books b JOIN FETCH b.pengarangCollection", Books.class);
         List<Books> results = querySelectAll.getResultList();
 
         DefaultTableModel model = (DefaultTableModel) tabelBuku.getModel();
         model.setRowCount(0);
         for (Books data : results) {
+            String pengarangLengkap = "";
+            int i = 1;
+            for (Pengarang pgr : data.getPengarangCollection()) {
+                pengarangLengkap += pgr.getName();
+                if (data.getPengarangCollection().size() > i) {
+                    pengarangLengkap += ", ";
+                }
+
+                i++;
+            }
             Object[] baris = new Object[6];
             baris[0] = data.getBookId();
             baris[1] = data.getIsbn();
             baris[2] = data.getJudul();
-            baris[3] = data.getPenerbit();
-            baris[4] = data.getTahunTerbit();
-            baris[5] = data.getCreatedAt();
+            baris[3] = pengarangLengkap;
+            baris[4] = data.getPenerbit();
+            baris[5] = data.getTahunTerbit();
             model.addRow(baris);
         }
         entityManager.getTransaction().commit();
@@ -407,6 +435,86 @@ public class PanelBukuNew extends javax.swing.JPanel {
 
     private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
+        int selectedIndex = inputTipeSearch.getSelectedIndex();
+        String queryTypeSearch = "Books.findByJudulLike";
+        String column = "judul";
+        String searchBy = "Judul";
+        if (selectedIndex == 1) {
+            queryTypeSearch = "Books.findByISBNLike";
+            column = "isbn";
+            searchBy = "ISBN";
+        } else if (selectedIndex == 2) {
+            queryTypeSearch = "Books.findByPenerbitLike";
+            column = "penerbit";
+            searchBy = "Penerbit";
+        } else if (selectedIndex == 4) {
+            queryTypeSearch = "Books.findByTahunTerbit";
+            column = "tahunTerbit";
+            searchBy = "Tahun Terbit";
+        }
+        String kataKunci = inputPencarian.getText();
+        if (kataKunci.equalsIgnoreCase("Cari Sesuatu")) {
+            kataKunci = "";
+        }
+
+        EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+        entityManager.getTransaction().begin();
+        TypedQuery<Books> query;
+        if (selectedIndex == 3) {
+            query = entityManager.createQuery("SELECT b FROM Books b JOIN b.pengarangCollection p WHERE UPPER(p.name) LIKE UPPER(:namaPengarang)", Books.class);
+            query.setParameter("namaPengarang", "%" + kataKunci + "%");
+            searchBy = "Pengarang";
+        } else {
+            query = entityManager.createNamedQuery(queryTypeSearch, Books.class);
+            if (selectedIndex == 4) {
+                query.setParameter(column, Integer.valueOf(kataKunci));
+            } else {
+                query.setParameter(column, "%" + kataKunci + "%");
+            }
+        }
+        List<Books> results = query.getResultList();
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+
+        List<HashMap<String, Object>> newResults = new ArrayList<>();
+        for (Books buku : results) {
+            System.out.println(buku.toString());
+            HashMap<String, Object> hasilBuku = new HashMap<>();
+            hasilBuku.put("judul", buku.getJudul());
+            
+            String pengarang = "";
+            int i = 1;
+            for (Pengarang pgr : buku.getPengarangCollection()) {
+                pengarang += pgr.getName();
+                if (buku.getPengarangCollection().size() > i) {
+                    pengarang += ", ";
+                }
+
+                i++;
+            }
+            
+            hasilBuku.put("pengarang", pengarang);
+            hasilBuku.put("penerbit", buku.getPenerbit());
+            hasilBuku.put("tahunTerbit", String.valueOf(buku.getTahunTerbit()));
+            hasilBuku.put("jumlahHalaman", String.valueOf(buku.getJumlahHalaman()));
+            newResults.add(hasilBuku);
+        }
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("querySearch", kataKunci);
+        parameters.put("searchBy", searchBy);
+
+        try {
+            String jrxmlFile = new String("src/Report/reportBuku.jrxml");
+            JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+            JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(newResults));
+            JasperViewer.viewReport(jp, false);
+        } catch (JRException ex) {
+            Logger.getLogger(PanelSkripsi.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            Logger.getLogger(PanelSkripsi.class.getName()).log(Level.SEVERE, null, e);
+        }
     }//GEN-LAST:event_btnPrintActionPerformed
 
     private void inputSubJudulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputSubJudulActionPerformed
@@ -430,7 +538,6 @@ public class PanelBukuNew extends javax.swing.JPanel {
         List<Pengarang> pengarangs = queryGetPengarang.getResultList();
         String pengarangLengkap = "";
 
-        System.out.println(pengarangs.size());
         int i = 1;
         for (Pengarang pengarang : pengarangs) {
             pengarangLengkap += pengarang.getName();
@@ -465,6 +572,8 @@ public class PanelBukuNew extends javax.swing.JPanel {
             } else if (selectedIndex == 2) {
                 queryTypeSearch = "Books.findByPenerbitLike";
                 column = "penerbit";
+            } else if (selectedIndex == 3) {
+
             } else if (selectedIndex == 4) {
                 queryTypeSearch = "Books.findByTahunTerbit";
                 column = "tahunTerbit";
@@ -473,30 +582,50 @@ public class PanelBukuNew extends javax.swing.JPanel {
 
             EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
             entityManager.getTransaction().begin();
-            TypedQuery<Books> query = entityManager.createNamedQuery(queryTypeSearch, Books.class);
-            if (selectedIndex == 4) {
-                query.setParameter(column, Integer.valueOf(kataKunci));
+            TypedQuery<Books> query;
+            if (selectedIndex == 3) {
+                query = entityManager.createQuery("SELECT b FROM Books b JOIN b.pengarangCollection p WHERE UPPER(p.name) LIKE UPPER(:namaPengarang)", Books.class);
+                query.setParameter("namaPengarang", "%" + kataKunci + "%");
             } else {
-                query.setParameter(column, "%" + kataKunci + "%");
+                query = entityManager.createNamedQuery(queryTypeSearch, Books.class);
+                if (selectedIndex == 4) {
+                    query.setParameter(column, Integer.valueOf(kataKunci));
+                } else {
+                    query.setParameter(column, "%" + kataKunci + "%");
+                }
             }
             List<Books> results = query.getResultList();
 
             DefaultTableModel model = (DefaultTableModel) tabelBuku.getModel();
             model.setRowCount(0);
             for (Books data : results) {
+                String pengarangLengkap = "";
+                int i = 1;
+                for (Pengarang pgr : data.getPengarangCollection()) {
+                    pengarangLengkap += pgr.getName();
+                    if (data.getPengarangCollection().size() > i) {
+                        pengarangLengkap += ", ";
+                    }
+
+                    i++;
+                }
                 Object[] baris = new Object[6];
                 baris[0] = data.getBookId();
                 baris[1] = data.getIsbn();
                 baris[2] = data.getJudul();
-                baris[3] = data.getPenerbit();
-                baris[4] = data.getTahunTerbit();
-                baris[5] = data.getCreatedAt();
+                baris[3] = pengarangLengkap;
+                baris[4] = data.getPenerbit();
+                baris[5] = data.getTahunTerbit();
                 model.addRow(baris);
             }
             entityManager.getTransaction().commit();
             entityManager.close();
         }
     }//GEN-LAST:event_inputPencarianKeyTyped
+
+    private void inputPencarianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputPencarianActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputPencarianActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

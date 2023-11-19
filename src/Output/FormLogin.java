@@ -5,6 +5,7 @@
 package Output;
 
 import Database.Users;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
@@ -52,6 +53,7 @@ public class FormLogin extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         inputPassword = new javax.swing.JPasswordField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -123,6 +125,13 @@ public class FormLogin extends javax.swing.JFrame {
                 inputPasswordFocusLost(evt);
             }
         });
+        inputPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputPasswordKeyTyped(evt);
+            }
+        });
+
+        jButton1.setText("jButton1");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -131,7 +140,10 @@ public class FormLogin extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(61, 61, 61)
+                        .addComponent(jButton1))
                     .addComponent(jLabel3)
                     .addComponent(jLabel1)
                     .addComponent(inputPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -161,11 +173,16 @@ public class FormLogin extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(inputPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(inputPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton1)))
                         .addGap(11, 11, 11)))
                 .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,13 +236,16 @@ public class FormLogin extends javax.swing.JFrame {
         if (inputUsername.getText().equals("") || new String(inputPassword.getPassword()).equals("")) {
             this.peringatan("Username/Password tidak boleh kosong!");
         } else if (results.isEmpty()) {
-            this.peringatan("Username/password tidak ditemukan!");
+            this.peringatan("Username/password salah!");
         } else {
             for (Users data : results) {
                 if (BCrypt.checkpw(this.passwordToString(inputPassword.getPassword()), data.getPassword())) {
-                    this.peringatan("berhasil login!");
+                    MenuUtama menu = new MenuUtama(data.getUserId());
+                    menu.setVisible(true);
+                    this.dispose();
+//                    this.peringatan("berhasil login!");
                 } else {
-                    this.peringatan("Username/password tidak ditemukan!");
+                    this.peringatan("Username/password salah!");
                 }
             }
         }
@@ -261,6 +281,37 @@ public class FormLogin extends javax.swing.JFrame {
         if (this.passwordToString(inputPassword.getPassword()).equalsIgnoreCase(""))
             inputPassword.setText("Password");
     }//GEN-LAST:event_inputPasswordFocusLost
+
+    private void inputPasswordKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputPasswordKeyTyped
+        // TODO add your handling code here:
+        if (evt.getKeyChar() == KeyEvent.VK_ENTER) {
+            EntityManager entityManager = Persistence.createEntityManagerFactory("tugasAkhirPBOPU").createEntityManager();
+            entityManager.getTransaction().begin();
+            TypedQuery<Users> queryGetUsername = entityManager.createNamedQuery("Users.findByUsername", Users.class);
+            queryGetUsername.setParameter("username", inputUsername.getText().trim());
+            List<Users> results = queryGetUsername.getResultList();
+
+            if (inputUsername.getText().equals("") || new String(inputPassword.getPassword()).equals("")) {
+                this.peringatan("Username/Password tidak boleh kosong!");
+            } else if (results.isEmpty()) {
+                this.peringatan("Username/password salah!");
+            } else {
+                for (Users data : results) {
+                    if (BCrypt.checkpw(this.passwordToString(inputPassword.getPassword()), data.getPassword())) {
+                        MenuUtama menu = new MenuUtama(data.getUserId());
+                        menu.setVisible(true);
+                        this.dispose();
+//                    this.peringatan("berhasil login!");
+                    } else {
+                        this.peringatan("Username/password salah!");
+                    }
+                }
+            }
+
+            entityManager.getTransaction().commit();
+            entityManager.close();
+        }
+    }//GEN-LAST:event_inputPasswordKeyTyped
 
     /**
      * @param args the command line arguments
@@ -301,6 +352,7 @@ public class FormLogin extends javax.swing.JFrame {
     private javax.swing.JButton btnLogin;
     private javax.swing.JPasswordField inputPassword;
     private javax.swing.JTextField inputUsername;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -11,3 +11,8 @@ Repo untuk tugas akhir Pemrograman Berbasis Objek (OOP)
 * Fixed Login design
 * Create CRUD for Books
 * fixed Searching
+
+#### 19-11-2023
+* CRUD for skripsi
+* Searching skripsi
+* Report kripsi and books

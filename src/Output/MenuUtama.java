@@ -14,11 +14,18 @@ import View.PanelSkripsi;
  */
 public class MenuUtama extends javax.swing.JFrame {
 
+    int userID;
+
     /**
      * Creates new form MenuUtama
      */
     public MenuUtama() {
         initComponents();
+    }
+
+    public MenuUtama(int userID) {
+        initComponents();
+        this.userID = userID;
     }
 
     /**
@@ -76,6 +83,11 @@ public class MenuUtama extends javax.swing.JFrame {
         menuDashboard.setForeground(new java.awt.Color(255, 255, 255));
         menuDashboard.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         menuDashboard.setText("Dashboard");
+        menuDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuDashboardMouseClicked(evt);
+            }
+        });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/home-30x30.png"))); // NOI18N
 
@@ -344,6 +356,14 @@ public class MenuUtama extends javax.swing.JFrame {
         panelMainCode.repaint();
         panelMainCode.revalidate();
     }//GEN-LAST:event_btnThesisMouseClicked
+
+    private void menuDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuDashboardMouseClicked
+        // TODO add your handling code here:
+        panelMainCode.removeAll();
+        panelMainCode.add(new PanelBuku());
+        panelMainCode.repaint();
+        panelMainCode.revalidate();                     
+    }//GEN-LAST:event_menuDashboardMouseClicked
 
     /**
      * @param args the command line arguments
