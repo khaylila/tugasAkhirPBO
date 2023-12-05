@@ -5,14 +5,19 @@
 package Database;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -22,64 +27,82 @@ import javax.persistence.TemporalType;
 
 /**
  *
- * @author saintek11
+ * @author milea
  */
 @Entity
 @Table(name = "books")
 @NamedQueries({
     @NamedQuery(name = "Books.findAll", query = "SELECT b FROM Books b"),
+    @NamedQuery(name = "Books.findByBookId", query = "SELECT b FROM Books b WHERE b.bookId = :bookId"),
     @NamedQuery(name = "Books.findByJudul", query = "SELECT b FROM Books b WHERE b.judul = :judul"),
+    @NamedQuery(name = "Books.findBySubJudul", query = "SELECT b FROM Books b WHERE b.subJudul = :subJudul"),
+    @NamedQuery(name = "Books.findByPengarang", query = "SELECT b FROM Books b WHERE b.pengarang = :pengarang"),
+    @NamedQuery(name = "Books.findByPenerbit", query = "SELECT b FROM Books b WHERE b.penerbit = :penerbit"),
     @NamedQuery(name = "Books.findByTahunTerbit", query = "SELECT b FROM Books b WHERE b.tahunTerbit = :tahunTerbit"),
     @NamedQuery(name = "Books.findByJumlahHalaman", query = "SELECT b FROM Books b WHERE b.jumlahHalaman = :jumlahHalaman"),
+    @NamedQuery(name = "Books.findByBanyaknya", query = "SELECT b FROM Books b WHERE b.banyaknya = :banyaknya"),
     @NamedQuery(name = "Books.findByCreatedAt", query = "SELECT b FROM Books b WHERE b.createdAt = :createdAt"),
     @NamedQuery(name = "Books.findByUpdatedAt", query = "SELECT b FROM Books b WHERE b.updatedAt = :updatedAt"),
-    @NamedQuery(name = "Books.findByBookId", query = "SELECT b FROM Books b WHERE b.bookId = :bookId"),
     @NamedQuery(name = "Books.findByIsbn", query = "SELECT b FROM Books b WHERE b.isbn = :isbn"),
-    @NamedQuery(name = "Books.findBySubJudul", query = "SELECT b FROM Books b WHERE b.subJudul = :subJudul"),
-    @NamedQuery(name = "Books.findByPenerbit", query = "SELECT b FROM Books b WHERE b.penerbit = :penerbit"),
-    @NamedQuery(name = "Books.findLastById", query = "SELECT b FROM Books b ORDER BY b.bookId DESC"),
-    @NamedQuery(name = "Books.findByJudulLike", query = "SELECT b FROM Books b WHERE UPPER(b.judul) LIKE UPPER(:judul)"),
-    @NamedQuery(name = "Books.findByISBNLike", query = "SELECT b FROM Books b WHERE UPPER(b.isbn) LIKE UPPER(:isbn)"),
-    @NamedQuery(name = "Books.findByPenerbitLike", query = "SELECT b FROM Books b WHERE UPPER(b.penerbit) LIKE UPPER(:penerbit)")})
-//    @NamedQuery(name = "Books.findByPengarangLike", query = "SELECT b FROM Books JOIN Pengarang b WHERE UPPER(b.judul) LIKE UPPER(:judul)")
-
+    @NamedQuery(name = "Books.findByLikeIsbn", query = "SELECT b FROM Books b WHERE b.isbn LIKE :parameter"),
+    @NamedQuery(name = "Books.findByLikeJudul", query = "SELECT b FROM Books b WHERE UPPER(b.judul) LIKE UPPER(:parameter)"),
+    @NamedQuery(name = "Books.findByLikePengarang", query = "SELECT b FROM Books b WHERE UPPER(b.pengarang) LIKE UPPER(:parameter)"),
+    @NamedQuery(name = "Books.findByLikePenerbit", query = "SELECT b FROM Books b WHERE UPPER(b.penerbit) LIKE UPPER(:parameter)"),
+    @NamedQuery(name = "Books.findByLikeTahunTerbit", query = "SELECT b FROM Books b WHERE b.tahunTerbit LIKE :parameter"),
+    @NamedQuery(name = "Books.findByLikeKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE c.nama = :parameter"),
+    @NamedQuery(name = "Books.findAllWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByLikeIsbnWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE b.isbn LIKE :parameter AND c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByLikeJudulWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE UPPER(b.judul) LIKE UPPER(:parameter) AND c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByLikePengarangWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE UPPER(b.pengarang) LIKE UPPER(:parameter) AND c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByLikePenerbitWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE UPPER(b.penerbit) LIKE UPPER(:parameter) AND c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByLikeTahunTerbitWithKategori", query = "SELECT b FROM Books b JOIN b.categoriesList c WHERE b.tahunTerbit LIKE :parameter AND c.nama = :kategori"),
+    @NamedQuery(name = "Books.findByUserId", query = "SELECT b FROM Books b JOIN b.studentId s WHERE b.userId.userId = :userId")})
 public class Books implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Basic(optional = false)
-    @Column(name = "judul")
-    private String judul;
-    @Basic(optional = false)
-    @Column(name = "tahun_terbit")
-    private int tahunTerbit;
-    @Basic(optional = false)
-    @Column(name = "jumlah_halaman")
-    private int jumlahHalaman;
-    @Basic(optional = false)
-    @Column(name = "created_at")
-    @Temporal(TemporalType.TIME)
-    private Date createdAt;
-    @Basic(optional = false)
-    @Column(name = "updated_at")
-    @Temporal(TemporalType.TIME)
-    private Date updatedAt;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "book_id")
     private Integer bookId;
-    @Basic(optional = false)
-    @Column(name = "isbn")
-    private String isbn;
+    @Column(name = "judul")
+    private String judul;
     @Column(name = "sub_judul")
     private String subJudul;
-    @Basic(optional = false)
+    @Column(name = "pengarang")
+    private String pengarang;
     @Column(name = "penerbit")
     private String penerbit;
-    @OneToMany(mappedBy = "bookId")
-    private Collection<Log> logCollection;
-    @OneToMany(mappedBy = "bookId")
-    private Collection<Pengarang> pengarangCollection;
+    @Column(name = "tahun_terbit")
+    private String tahunTerbit;
+    @Column(name = "jumlah_halaman")
+    private Integer jumlahHalaman;
+    @Column(name = "banyaknya")
+    private Integer banyaknya;
+    @Lob
+    @Column(name = "foto_sampul")
+    private byte[] fotoSampul;
+    @Column(name = "created_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+    @Column(name = "isbn")
+    private String isbn;
+    @JoinTable(name = "books_categories", joinColumns = {
+        @JoinColumn(name = "book_id", referencedColumnName = "book_id")}, inverseJoinColumns = {
+        @JoinColumn(name = "kategori_id", referencedColumnName = "kategori_id")})
+    @ManyToMany
+    private List<Categories> categoriesList;
+    @JoinColumn(name = "student_id", referencedColumnName = "student_id")
+    @ManyToOne
+    private Students studentId;
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @ManyToOne
+    private Users userId;
+    @OneToMany(mappedBy = "booksId")
+    private List<Borrows> borrowsList;
 
     public Books() {
     }
@@ -88,15 +111,12 @@ public class Books implements Serializable {
         this.bookId = bookId;
     }
 
-    public Books(Integer bookId, String judul, int tahunTerbit, int jumlahHalaman, Date createdAt, Date updatedAt, String isbn, String penerbit) {
+    public Integer getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Integer bookId) {
         this.bookId = bookId;
-        this.judul = judul;
-        this.tahunTerbit = tahunTerbit;
-        this.jumlahHalaman = jumlahHalaman;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.isbn = isbn;
-        this.penerbit = penerbit;
     }
 
     public String getJudul() {
@@ -107,20 +127,60 @@ public class Books implements Serializable {
         this.judul = judul;
     }
 
-    public int getTahunTerbit() {
+    public String getSubJudul() {
+        return subJudul;
+    }
+
+    public void setSubJudul(String subJudul) {
+        this.subJudul = subJudul;
+    }
+
+    public String getPengarang() {
+        return pengarang;
+    }
+
+    public void setPengarang(String pengarang) {
+        this.pengarang = pengarang;
+    }
+
+    public String getPenerbit() {
+        return penerbit;
+    }
+
+    public void setPenerbit(String penerbit) {
+        this.penerbit = penerbit;
+    }
+
+    public String getTahunTerbit() {
         return tahunTerbit;
     }
 
-    public void setTahunTerbit(int tahunTerbit) {
+    public void setTahunTerbit(String tahunTerbit) {
         this.tahunTerbit = tahunTerbit;
     }
 
-    public int getJumlahHalaman() {
+    public Integer getJumlahHalaman() {
         return jumlahHalaman;
     }
 
-    public void setJumlahHalaman(int jumlahHalaman) {
+    public void setJumlahHalaman(Integer jumlahHalaman) {
         this.jumlahHalaman = jumlahHalaman;
+    }
+
+    public Integer getBanyaknya() {
+        return banyaknya;
+    }
+
+    public void setBanyaknya(Integer banyaknya) {
+        this.banyaknya = banyaknya;
+    }
+
+    public byte[] getFotoSampul() {
+        return fotoSampul;
+    }
+
+    public void setFotoSampul(byte[] fotoSampul) {
+        this.fotoSampul = fotoSampul;
     }
 
     public Date getCreatedAt() {
@@ -139,14 +199,6 @@ public class Books implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Integer getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Integer bookId) {
-        this.bookId = bookId;
-    }
-
     public String getIsbn() {
         return isbn;
     }
@@ -155,36 +207,36 @@ public class Books implements Serializable {
         this.isbn = isbn;
     }
 
-    public String getSubJudul() {
-        return subJudul;
+    public List<Categories> getCategoriesList() {
+        return categoriesList;
     }
 
-    public void setSubJudul(String subJudul) {
-        this.subJudul = subJudul;
+    public void setCategoriesList(List<Categories> categoriesList) {
+        this.categoriesList = categoriesList;
     }
 
-    public String getPenerbit() {
-        return penerbit;
+    public Students getStudentId() {
+        return studentId;
     }
 
-    public void setPenerbit(String penerbit) {
-        this.penerbit = penerbit;
+    public void setStudentId(Students studentId) {
+        this.studentId = studentId;
     }
 
-    public Collection<Log> getLogCollection() {
-        return logCollection;
+    public Users getUserId() {
+        return userId;
     }
 
-    public void setLogCollection(Collection<Log> logCollection) {
-        this.logCollection = logCollection;
+    public void setUserId(Users userId) {
+        this.userId = userId;
     }
 
-    public Collection<Pengarang> getPengarangCollection() {
-        return pengarangCollection;
+    public List<Borrows> getBorrowsList() {
+        return borrowsList;
     }
 
-    public void setPengarangCollection(Collection<Pengarang> pengarangCollection) {
-        this.pengarangCollection = pengarangCollection;
+    public void setBorrowsList(List<Borrows> borrowsList) {
+        this.borrowsList = borrowsList;
     }
 
     @Override
