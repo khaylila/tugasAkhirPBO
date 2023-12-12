@@ -3,6 +3,7 @@ Repo untuk tugas akhir Pemrograman Berbasis Objek (OOP)
 
 # Password default
 username : khaylila
+\n
 password : 2016
 
 ### CHANGE LOG
