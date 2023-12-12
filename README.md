@@ -1,10 +1,9 @@
 # tugasAkhirPBO
 Repo untuk tugas akhir Pemrograman Berbasis Objek (OOP)
 
-## Penting
-### Untuk masuk kedalam aplikasi password defaultnya adalah
-### username : khaylila
-### password : 2016
+# Password default
+username : khaylila
+password : 2016
 
 ### CHANGE LOG
 #### 05-11-2023
