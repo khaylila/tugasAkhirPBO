@@ -21,8 +21,12 @@ public class Dashboard extends javax.swing.JFrame {
     int userId;
 
     public Dashboard(int userId) {
-        this.userId = userId;
         initComponents();
+        panelMain.removeAll();
+        panelMain.add(new View.Dashboard(this, userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+        this.userId = userId;
     }
 
     public Dashboard(int userId, String panel) {
@@ -45,12 +49,50 @@ public class Dashboard extends javax.swing.JFrame {
             panelMain.revalidate();
         }
     }
+    
+    public void redirectToBuku(int userId, String kategori){
+        panelMain.removeAll();
+        panelMain.add(new BookNew(this, userId, kategori));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
+    
+    public void redirectToBuku(int userId){
+        panelMain.removeAll();
+        panelMain.add(new BookNew(this, userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
+    
+    public void redirectToSkripsi(int userId){
+        panelMain.removeAll();
+        panelMain.add(new TesisView(this, userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
+    
+    public void redirectToPeminjaman(int userId){
+        panelMain.removeAll();
+        panelMain.add(new Peminjaman(userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
+    
+    public void redirectToPeminjam(int userId){
+        panelMain.removeAll();
+        panelMain.add(new Mahasiswa(this, userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }
 
     /**
      * Creates new form Dashboard
      */
     public Dashboard() {
-        this.dispose();
+        initComponents();
+        panelMain.add(new View.Dashboard());
+        panelMain.repaint();
+        panelMain.revalidate();
     }
 
     /**
@@ -113,6 +155,11 @@ public class Dashboard extends javax.swing.JFrame {
         menuBar1.add(menuLanjutan);
 
         menuDashboard.setText("Dashboard");
+        menuDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menuDashboardMouseClicked(evt);
+            }
+        });
         menuBar1.add(menuDashboard);
 
         menuBuku.setText("Buku");
@@ -212,6 +259,14 @@ public class Dashboard extends javax.swing.JFrame {
         panelMain.repaint();
         panelMain.revalidate();
     }//GEN-LAST:event_dataUserActionPerformed
+
+    private void menuDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuDashboardMouseClicked
+        // TODO add your handling code here:
+        panelMain.removeAll();
+        panelMain.add(new View.Dashboard(this, userId));
+        panelMain.repaint();
+        panelMain.revalidate();
+    }//GEN-LAST:event_menuDashboardMouseClicked
 
     /**
      * @param args the command line arguments

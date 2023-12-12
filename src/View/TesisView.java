@@ -18,6 +18,7 @@ import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import javax.persistence.Query;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import net.sf.jasperreports.engine.JRException;
@@ -113,6 +114,7 @@ public class TesisView extends javax.swing.JPanel {
         btnPrint = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tabelTesis = new javax.swing.JTable();
+        btnPrintPeminjamanTerbanyak = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -187,6 +189,16 @@ public class TesisView extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(tabelTesis);
 
+        btnPrintPeminjamanTerbanyak.setBackground(new java.awt.Color(255, 204, 0));
+        btnPrintPeminjamanTerbanyak.setForeground(new java.awt.Color(255, 255, 255));
+        btnPrintPeminjamanTerbanyak.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/document-30x30.png"))); // NOI18N
+        btnPrintPeminjamanTerbanyak.setText("Print Peminjaman Terbanyak");
+        btnPrintPeminjamanTerbanyak.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintPeminjamanTerbanyakActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -199,7 +211,9 @@ public class TesisView extends javax.swing.JPanel {
                         .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 592, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnPrintPeminjamanTerbanyak)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 322, Short.MAX_VALUE)
                         .addComponent(searchBy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -213,7 +227,8 @@ public class TesisView extends javax.swing.JPanel {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnPrintPeminjamanTerbanyak, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(searchBy))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 527, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,7 +288,7 @@ public class TesisView extends javax.swing.JPanel {
             JTable target = (JTable) evt.getSource();
             int row = target.getSelectedRow();
             System.out.println(target.getModel().getValueAt(row, 0).toString());
-            int index = Integer.valueOf(target.getModel().getValueAt(row, 0).toString());
+            int index = Integer.parseInt(target.getModel().getValueAt(row, 0).toString());
             new ViewTesis(userId, listTesis.get((index - 1)).getTesisId()).setVisible(true);
             ((Dashboard) this.obj).dispose();
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -282,10 +297,40 @@ public class TesisView extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tabelTesisMouseClicked
 
+    private void btnPrintPeminjamanTerbanyakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintPeminjamanTerbanyakActionPerformed
+        // TODO add your handling code here:
+        Query resultSet = entityManager.createNativeQuery("SELECT thesis.judul, borrows.tesis_id, COUNT(borrows.tesis_id) AS jumlah_peminjaman FROM borrows JOIN thesis ON borrows.tesis_id = thesis.tesis_id GROUP BY borrows.tesis_id, thesis.judul ORDER BY jumlah_peminjaman DESC LIMIT 10;");
+        List<Object[]> resultList = resultSet.getResultList();
+        
+        List<Map> rst = new ArrayList<>();
+        for (Object[] result : resultList) {
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("judul", result[0]);
+            fields.put("banyak_peminjaman", result[2]);
+            rst.add(fields);
+        }
+        
+        Map<String, Object> parameters = new HashMap<>();
+        String desc = "Berikut adalah laporan 10 skripsi dengan peminjaman terbanyak hingga saat ini.";
+        parameters.put("desc", desc);
+
+        try {
+            String jrxmlFile = new String("src/Report/reportTerbanyak.jrxml");
+            JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+            JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(rst));
+            JasperViewer.viewReport(jp, false);
+        } catch (JRException ex) {
+            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }//GEN-LAST:event_btnPrintPeminjamanTerbanyakActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnPrint;
+    private javax.swing.JButton btnPrintPeminjamanTerbanyak;
     private javax.swing.JTextField inputSearch;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JComboBox<String> searchBy;

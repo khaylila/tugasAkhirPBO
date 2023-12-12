@@ -33,6 +33,75 @@ public class ViewBuku extends MainFrame {
         initComponents();
     }
 
+    public ViewBuku(int userId, int bookId, String from) {
+        if (from.equalsIgnoreCase("dashboard")) {
+            this.backToMainMenu = false;
+        }
+        this.userId = userId;
+
+        initComponents();
+
+        TypedQuery<Books> getBukuById = entityManager.createNamedQuery("Books.findByBookId", Books.class);
+        getBukuById.setParameter("bookId", bookId);
+        Books result = getBukuById.getSingleResult();
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            labelBukuId.setText("ID : " + String.format("%010d", result.getBookId()));
+            inputJudulBuku.setText(result.getJudul());
+            inputSubJudul.setText(result.getSubJudul());
+            inputJumlahHalaman.setText(String.valueOf(result.getJumlahHalaman()));
+            inputPenerbit.setText(result.getPenerbit());
+            inputTahunTerbit.setText(result.getTahunTerbit());
+            labelCreatedAt.setText("Tgl. Ditambahkan: " + dateFormat.format(result.getCreatedAt()));
+            labelUpdatedAt.setText("Terakhir Diubah: " + dateFormat.format(result.getUpdatedAt()));
+
+//          begin pengarang
+            inputPengarang.setText("");
+            for (String pengarang : result.getPengarang().split(",")) {
+                inputPengarang.append(pengarang.trim() + ",\n");
+            }
+//          end pengarang
+
+//          begin kategori
+            inputKategoriBuku.setText("");
+            for (Categories kategori : result.getCategoriesList()) {
+                inputKategoriBuku.append(kategori.getNama().trim() + ",\n");
+            }
+//          end kategori
+
+//          begin daftar peminjam
+            TypedQuery<Borrows> queryByIdBuku = entityManager.createNamedQuery("Borrows.findByBookId", Borrows.class);
+            queryByIdBuku.setParameter("bookId", result.getBookId());
+            DefaultTableModel model = (DefaultTableModel) tabelPeminjam.getModel();
+            model.setRowCount(0);
+            List<Borrows> results = queryByIdBuku.getResultList();
+            int i = 1;
+            if (!results.isEmpty()) {
+                for (Borrows peminjam : results) {
+                    Object[] baris = new Object[3];
+                    baris[0] = peminjam.getStudentId().getFullname();
+                    baris[1] = new SimpleDateFormat("dd/MM/yyyy").format(peminjam.getTanggalPinjam());
+                    baris[2] = (peminjam.getTanggalKembali() == null ? "Blm kembali" : "Dikembalikan");
+                    model.addRow(baris);
+                }
+            }
+//          end daftar peminjam
+
+//          begin image
+            if (result.getFotoSampul() != null) {
+                labelImage.setIcon(this.getImageFromDatabase(result.getFotoSampul(), 250));
+            }
+//          end image
+
+            inputBanyaknya.setText(result.getBanyaknya() + " / " + results.size() + " / " + (result.getBanyaknya() - results.size()));
+
+            this.buku = result;
+        } catch (NoResultException e) {
+            this.peringatan("Data tidak ditemukan!");
+            this.dispose();
+        }
+    }
+
     public ViewBuku(int userId, int bookId) {
         this.userId = userId;
 

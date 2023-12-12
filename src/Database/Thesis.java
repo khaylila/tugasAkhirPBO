@@ -29,6 +29,7 @@ import javax.persistence.TemporalType;
 @Table(name = "thesis")
 @NamedQueries({
     @NamedQuery(name = "Thesis.findAll", query = "SELECT t FROM Thesis t"),
+    @NamedQuery(name = "Thesis.findAllDesc", query = "SELECT t FROM Thesis t ORDER BY t.tesisId DESC"),
     @NamedQuery(name = "Thesis.findByTesisId", query = "SELECT t FROM Thesis t WHERE t.tesisId = :tesisId"),
     @NamedQuery(name = "Thesis.findByJudul", query = "SELECT t FROM Thesis t WHERE t.judul = :judul"),
     @NamedQuery(name = "Thesis.findByTahunTerbit", query = "SELECT t FROM Thesis t WHERE t.tahunTerbit = :tahunTerbit"),
@@ -37,7 +38,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Thesis.findByUpdatedAt", query = "SELECT t FROM Thesis t WHERE t.updatedAt = :updatedAt"),
     @NamedQuery(name = "Thesis.findByBanyaknya", query = "SELECT t FROM Thesis t WHERE t.banyaknya = :banyaknya"),
     @NamedQuery(name = "Thesis.findByLikeJudul", query = "SELECT t FROM Thesis t WHERE UPPER(t.judul) LIKE UPPER(:parameter)"),
-    @NamedQuery(name = "Thesis.findByLikeTahunTerbit", query = "SELECT t FROM Thesis t WHERE t.tahunTerbit LIKE :paramter"),
+    @NamedQuery(name = "Thesis.findByLikeTahunTerbit", query = "SELECT t FROM Thesis t WHERE CAST(t.tahunTerbit AS text) LIKE :parameter"),
     @NamedQuery(name = "Thesis.findByLikeStudent", query = "SELECT t FROM Thesis t JOIN t.studentId s WHERE UPPER(s.fullname) LIKE UPPER(:parameter)"),
     @NamedQuery(name = "Thesis.findByUserId", query = "SELECT t FROM Thesis t JOIN t.studentId s WHERE t.userId.userId = :userId")})
 public class Thesis implements Serializable {

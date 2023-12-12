@@ -32,6 +32,64 @@ public class ViewTesis extends MainFrame {
         initComponents();
     }
 
+    public ViewTesis(int userId, int tesisId, String from) {
+        if (from.equalsIgnoreCase("dashboard")) {
+            this.backToMainMenu = false;
+        }
+
+        this.userId = userId;
+
+        initComponents();
+
+        TypedQuery<Thesis> getTesisById = entityManager.createNamedQuery("Thesis.findByTesisId", Thesis.class);
+        getTesisById.setParameter("tesisId", tesisId);
+        Thesis result = getTesisById.getSingleResult();
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            labelTesisId.setText("ID : " + String.format("%010d", result.getTesisId()));
+            inputJudulTesis.setText(result.getJudul());
+            inputJumlahHalaman.setText(String.valueOf(result.getJumlahHalaman()));
+            inputTahunTerbit.setText(result.getTahunTerbit());
+            labelCreatedAt.setText("Tgl. Ditambahkan: " + dateFormat.format(result.getCreatedAt()));
+            labelUpdatedAt.setText("Terakhir Diubah: " + dateFormat.format(result.getUpdatedAt()));
+
+//          begin pengarang
+            inputPengarang.setText(result.getStudentId().getFullname());
+//          end pengarang
+
+//          begin daftar peminjam
+            TypedQuery<Borrows> queryByIdTesis = entityManager.createNamedQuery("Borrows.findByTesisId", Borrows.class);
+            queryByIdTesis.setParameter("tesisId", result.getTesisId());
+            DefaultTableModel model = (DefaultTableModel) tabelPeminjam.getModel();
+            model.setRowCount(0);
+            List<Borrows> results = queryByIdTesis.getResultList();
+            if (!results.isEmpty()) {
+                for (Borrows peminjam : results) {
+                    Object[] baris = new Object[3];
+                    baris[0] = peminjam.getStudentId().getFullname();
+                    baris[1] = new SimpleDateFormat("dd/MM/yyyy").format(peminjam.getTanggalPinjam());
+                    baris[2] = (peminjam.getTanggalKembali() == null ? "Blm kembali" : "Dikembalikan");
+                    model.addRow(baris);
+                }
+            }
+//          end daftar peminjam
+
+//          begin image
+            if (result.getFotoSampul() != null) {
+                labelImage.setIcon(this.getImageFromDatabase(result.getFotoSampul(), 250));
+            }
+//          end image
+
+            inputBanyaknya.setText(result.getBanyaknya() + " / " + results.size() + " / " + (result.getBanyaknya() - results.size()));
+
+            this.tesis = result;
+        } catch (NoResultException e) {
+            this.peringatan("Data tidak ditemukan!");
+            this.dispose();
+        }
+
+    }
+
     public ViewTesis(int userId, int tesisId) {
         this.userId = userId;
 

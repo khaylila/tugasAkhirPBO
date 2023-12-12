@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JRException;
@@ -35,6 +37,7 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class Peminjaman extends javax.swing.JPanel {
 
+    private final EntityManager entityManager = Persistence.createEntityManagerFactory("TraineTugasAkhirPBOPU").createEntityManager();
     int userId;
     ArrayList<Borrows> listPeminjam = new ArrayList<>();
 
@@ -95,12 +98,13 @@ public class Peminjaman extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabelPinjam = new javax.swing.JTable();
         btnTambahPeminjam = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnPrint = new javax.swing.JButton();
         inputSearch = new javax.swing.JTextField();
         searchBy = new javax.swing.JComboBox<>();
         filterYear = new javax.swing.JComboBox<>();
         filterMonth = new javax.swing.JComboBox<>();
         btnTambahPeminjamSkripsi = new javax.swing.JButton();
+        filterPrintType = new javax.swing.JComboBox<>();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1240, 625));
@@ -158,13 +162,13 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 204, 0));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/document-30x30.png"))); // NOI18N
-        jButton2.setText("Cetak");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnPrint.setBackground(new java.awt.Color(255, 204, 0));
+        btnPrint.setForeground(new java.awt.Color(255, 255, 255));
+        btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/document-30x30.png"))); // NOI18N
+        btnPrint.setText("Cetak");
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnPrintActionPerformed(evt);
             }
         });
 
@@ -175,7 +179,7 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
-        searchBy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Judul", "Mahasiswa", "Angkatan", "Kategori Terbanyak" }));
+        searchBy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Judul", "Mahasiswa", "Angkatan" }));
 
         filterYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item1" }));
 
@@ -196,6 +200,8 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
+        filterPrintType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Default", "Buku Terbanyak Dipinjam", "Skripsi Terbanyak Dipinjam" }));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -210,7 +216,9 @@ public class Peminjaman extends javax.swing.JPanel {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(btnTambahPeminjamSkripsi)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton2)
+                            .addComponent(filterPrintType, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnPrint)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(filterMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -236,8 +244,9 @@ public class Peminjaman extends javax.swing.JPanel {
                         .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnTambahPeminjam)
-                        .addComponent(jButton2)
-                        .addComponent(btnTambahPeminjamSkripsi)))
+                        .addComponent(btnTambahPeminjamSkripsi)
+                        .addComponent(filterPrintType, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnPrint)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
@@ -277,7 +286,7 @@ public class Peminjaman extends javax.swing.JPanel {
 
             }
         }
-        EntityManager entityManager = Persistence.createEntityManagerFactory("TraineTugasAkhirPBOPU").createEntityManager();
+
         TypedQuery<Borrows> queryListBorrows = null;
         queryListBorrows = entityManager.createNamedQuery(query, Borrows.class);
         queryListBorrows.setParameter("parameter", "%" + search + "%");
@@ -286,30 +295,98 @@ public class Peminjaman extends javax.swing.JPanel {
         return queryListBorrows.getResultList();
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
         // TODO add your handling code here:
-        List<Borrows> resultQueryListBorrows = this.queryBorrow();
-        resultQueryListBorrows.get(0).getStudentId();
+        if (filterPrintType.getSelectedIndex() == 0) {
+            List<Borrows> resultQueryListBorrows = this.queryBorrow();
+            resultQueryListBorrows.get(0).getStudentId();
 
-        Long timeStampNow = new Date().getTime() / 1000;
+            Long timeStampNow = new Date().getTime() / 1000;
 
-        Map<String, Object> parameters = new HashMap<>();
-        String desc = "Berikut adalah laporan pada bulan " + filterMonth.getSelectedItem().toString() + " " + filterYear.getSelectedItem().toString() + (inputSearch.getText().equals("") ? " berdasarkan pencarian '" + inputSearch.getText() + "' pada " + searchBy.getSelectedItem() : "");
-        parameters.put("desc", desc);
-        parameters.put("ts", timeStampNow);
-        parameters.put("simpleDateFormat", new SimpleDateFormat("dd/MM/yyyy"));
+            Map<String, Object> parameters = new HashMap<>();
+            String desc = "Berikut adalah laporan pada bulan " + filterMonth.getSelectedItem().toString() + " " + filterYear.getSelectedItem().toString() + (inputSearch.getText().equals("") ? " berdasarkan pencarian '" + inputSearch.getText() + "' pada " + searchBy.getSelectedItem() : "");
+            parameters.put("desc", desc);
+            parameters.put("ts", timeStampNow);
+            parameters.put("simpleDateFormat", new SimpleDateFormat("dd/MM/yyyy"));
 
-        try {
-            String jrxmlFile = new String("src/Report/peminjaman.jrxml");
-            JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
-            JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(resultQueryListBorrows));
-            JasperViewer.viewReport(jp, false);
-        } catch (JRException ex) {
-            System.out.println(ex.getMessage());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            try {
+                String jrxmlFile = new String("src/Report/peminjaman.jrxml");
+                JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+                JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(resultQueryListBorrows));
+                JasperViewer.viewReport(jp, false);
+            } catch (JRException ex) {
+                System.out.println(ex.getMessage());
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else if (filterPrintType.getSelectedIndex() == 1) {
+            Query resultSet = entityManager.createNativeQuery("SELECT books.judul, borrows.books_id, COUNT(borrows.books_id) AS jumlah_peminjaman FROM borrows JOIN books ON books.book_id = borrows.books_id WHERE EXTRACT(MONTH FROM borrows.created_at) = ? AND EXTRACT(YEAR FROM borrows.created_at) = ? GROUP BY borrows.books_id, books.judul ORDER BY jumlah_peminjaman DESC LIMIT 10;");
+            resultSet.setParameter(1, filterMonth.getSelectedIndex() + 1);
+            resultSet.setParameter(2, Integer.valueOf(filterYear.getSelectedItem().toString()));
+            List<Object[]> resultList = resultSet.getResultList();
+            if (resultList.size() > 0) {
+                List<Map> rst = new ArrayList<>();
+                for (Object[] result : resultList) {
+                    Map<String, Object> fields = new HashMap<>();
+                    fields.put("judul", result[0]);
+                    fields.put("banyak_peminjaman", result[2]);
+                    rst.add(fields);
+                }
+
+                Map<String, Object> parameters = new HashMap<>();
+                String desc = "Berikut adalah laporan 10 buku dengan peminjaman terbanyak pada bulan '" + filterMonth.getSelectedItem().toString() + "' tahun '" + filterYear.getSelectedItem().toString() + "'.";
+                parameters.put("desc", desc);
+
+                try {
+                    String jrxmlFile = new String("src/Report/reportTerbanyak.jrxml");
+                    JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+                    JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(rst));
+                    JasperViewer.viewReport(jp, false);
+                } catch (JRException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                this.peringatan("Data tidak ditemukan!");
+            }
+        } else if (filterPrintType.getSelectedIndex() == 2) {
+            Query resultSet = entityManager.createNativeQuery("SELECT thesis.judul, borrows.tesis_id, COUNT(borrows.tesis_id) AS jumlah_peminjaman FROM borrows JOIN thesis ON borrows.tesis_id = thesis.tesis_id  WHERE EXTRACT(MONTH FROM borrows.created_at) = ? AND EXTRACT(YEAR FROM borrows.created_at) = ? GROUP BY borrows.tesis_id, thesis.judul ORDER BY jumlah_peminjaman DESC LIMIT 10;");
+            resultSet.setParameter(1, filterMonth.getSelectedIndex() + 1);
+            resultSet.setParameter(2, Integer.valueOf(filterYear.getSelectedItem().toString()));
+            List<Object[]> resultList = resultSet.getResultList();
+            if (resultList.size() > 0) {
+                List<Map> rst = new ArrayList<>();
+                for (Object[] result : resultList) {
+                    Map<String, Object> fields = new HashMap<>();
+                    fields.put("judul", result[0]);
+                    fields.put("banyak_peminjaman", result[2]);
+                    rst.add(fields);
+                }
+
+                Map<String, Object> parameters = new HashMap<>();
+                String desc = "Berikut adalah laporan 10 skripsi dengan peminjaman terbanyak hingga saat ini.";
+                parameters.put("desc", desc);
+
+                try {
+                    String jrxmlFile = new String("src/Report/reportTerbanyak.jrxml");
+                    JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+                    JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(rst));
+                    JasperViewer.viewReport(jp, false);
+                } catch (JRException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                this.peringatan("Data tidak ditemukan!");
+            }
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnPrintActionPerformed
+
+    public void peringatan(String pesan) {
+        JOptionPane.showMessageDialog(this, pesan);
+    }
 
     private void inputSearchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputSearchKeyTyped
         // TODO add your handling code here:
@@ -325,12 +402,13 @@ public class Peminjaman extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnPrint;
     private javax.swing.JButton btnTambahPeminjam;
     private javax.swing.JButton btnTambahPeminjamSkripsi;
     private javax.swing.JComboBox<String> filterMonth;
+    private javax.swing.JComboBox<String> filterPrintType;
     private javax.swing.JComboBox<String> filterYear;
     private javax.swing.JTextField inputSearch;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<String> searchBy;

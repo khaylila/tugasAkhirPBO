@@ -151,7 +151,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$V{COLUMN_COUNT}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER} > 1 ? (($V{PAGE_NUMBER} - 1) * 18)- 3 + $V{COLUMN_COUNT} : $V{COLUMN_COUNT}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="43" y="0" width="80" height="34" uuid="16e65623-a723-4f1b-aeb1-d806cf209a26"/>

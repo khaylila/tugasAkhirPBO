@@ -33,6 +33,7 @@ import javax.persistence.TemporalType;
 @Table(name = "books")
 @NamedQueries({
     @NamedQuery(name = "Books.findAll", query = "SELECT b FROM Books b"),
+    @NamedQuery(name = "Books.findAllDesc", query = "SELECT b FROM Books b ORDER BY b.bookId DESC"),
     @NamedQuery(name = "Books.findByBookId", query = "SELECT b FROM Books b WHERE b.bookId = :bookId"),
     @NamedQuery(name = "Books.findByJudul", query = "SELECT b FROM Books b WHERE b.judul = :judul"),
     @NamedQuery(name = "Books.findBySubJudul", query = "SELECT b FROM Books b WHERE b.subJudul = :subJudul"),
