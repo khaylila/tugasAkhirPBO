@@ -188,22 +188,30 @@
     </Component>
     <Component class="javax.swing.JTextField" name="inputSearch">
       <Properties>
+        <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="Search"/>
       </Properties>
       <Events>
+        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="inputSearchFocusGained"/>
+        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="inputSearchFocusLost"/>
         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="inputSearchKeyTyped"/>
       </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="searchBy">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="3">
-            <StringItem index="0" value="Judul"/>
-            <StringItem index="1" value="Mahasiswa"/>
-            <StringItem index="2" value="Angkatan"/>
+          <StringArray count="5">
+            <StringItem index="0" value="All"/>
+            <StringItem index="1" value="Judul Buku"/>
+            <StringItem index="2" value="Judul Skripsi"/>
+            <StringItem index="3" value="Mahasiswa"/>
+            <StringItem index="4" value="Angkatan"/>
           </StringArray>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="searchByItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>

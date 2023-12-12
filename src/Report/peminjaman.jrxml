@@ -12,6 +12,7 @@
 	<field name="rencanaKembali" class="java.util.Date"/>
 	<field name="tanggalKembali" class="java.util.Date"/>
 	<field name="denda" class="java.lang.Integer"/>
+	<field name="tesisId" class="Database.Thesis"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -53,7 +54,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Judul Buku]]></text>
+				<text><![CDATA[Judul Buku/Skripsi]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="0" width="43" height="24" uuid="f105b3c9-e1d2-492f-8cc8-687357dc4889"/>
@@ -167,7 +168,7 @@
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{booksId}.getJudul()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{booksId} != null ? $F{booksId}.getJudul() : $F{tesisId}.getJudul()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="0" width="43" height="40" uuid="0721e4af-207c-4952-b71b-d41a7a19b18b"/>

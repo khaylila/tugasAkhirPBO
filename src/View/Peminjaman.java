@@ -172,14 +172,28 @@ public class Peminjaman extends javax.swing.JPanel {
             }
         });
 
+        inputSearch.setEditable(false);
         inputSearch.setText("Search");
+        inputSearch.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                inputSearchFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                inputSearchFocusLost(evt);
+            }
+        });
         inputSearch.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 inputSearchKeyTyped(evt);
             }
         });
 
-        searchBy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Judul", "Mahasiswa", "Angkatan" }));
+        searchBy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Judul Buku", "Judul Skripsi", "Mahasiswa", "Angkatan" }));
+        searchBy.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                searchByItemStateChanged(evt);
+            }
+        });
 
         filterYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item1" }));
 
@@ -272,24 +286,30 @@ public class Peminjaman extends javax.swing.JPanel {
 
     private List<Borrows> queryBorrow() {
         String search = inputSearch.getText().trim();
+        int filter = searchBy.getSelectedIndex();
         if (search.equalsIgnoreCase("search")) {
             search = "";
         }
-        int filter = searchBy.getSelectedIndex();
-        String query = "Borrows.findByLikeBooksJudulWithMonthYear";
-        if (!search.equals("")) {
-            if (filter == 1) {
-                query = "Borrows.findByLikeMahasiswaFullnameWithMonthYear";
-            } else if (filter == 2) {
-                query = "Borrows.findByLikeMahasiswaAngkatanWithMonthYear";
-            } else if (filter == 3) {
 
-            }
+        String query = "";
+        if (filter == 0) {
+            query = "Borrows.findAllWithMonthYear";
+        } else if (filter == 1) {
+            query = "Borrows.findByLikeBooksJudulWithMonthYear";
+        } else if (filter == 2) {
+            query = "Borrows.findByLikeThesisJudulWithMonthYear";
+        } else if (filter == 3) {
+            query = "Borrows.findByLikeMahasiswaFullnameWithMonthYear";
+        } else if (filter == 4) {
+            query = "Borrows.findByLikeMahasiswaAngkatanWithMonthYear";
         }
 
         TypedQuery<Borrows> queryListBorrows = null;
         queryListBorrows = entityManager.createNamedQuery(query, Borrows.class);
-        queryListBorrows.setParameter("parameter", "%" + search + "%");
+
+        if (filter != 0) {
+            queryListBorrows.setParameter("parameter", "%" + search + "%");
+        }
         queryListBorrows.setParameter("month", ((filterMonth.getSelectedIndex() + 1)));
         queryListBorrows.setParameter("year", Integer.valueOf(filterYear.getSelectedItem().toString()));
         return queryListBorrows.getResultList();
@@ -304,20 +324,30 @@ public class Peminjaman extends javax.swing.JPanel {
             Long timeStampNow = new Date().getTime() / 1000;
 
             Map<String, Object> parameters = new HashMap<>();
-            String desc = "Berikut adalah laporan pada bulan " + filterMonth.getSelectedItem().toString() + " " + filterYear.getSelectedItem().toString() + (inputSearch.getText().equals("") ? " berdasarkan pencarian '" + inputSearch.getText() + "' pada " + searchBy.getSelectedItem() : "");
+            int filter = searchBy.getSelectedIndex();
+            String desc = "Berikut adalah laporan pada bulan " + filterMonth.getSelectedItem().toString() + " " + filterYear.getSelectedItem().toString();
+            if (filter != 0) {
+                if (!inputSearch.getText().equalsIgnoreCase("search") || !inputSearch.getText().isEmpty()) {
+                    desc += " berdasarkan pencarian '" + inputSearch.getText() + "' pada " + searchBy.getSelectedItem();
+                }
+            }
+
             parameters.put("desc", desc);
             parameters.put("ts", timeStampNow);
             parameters.put("simpleDateFormat", new SimpleDateFormat("dd/MM/yyyy"));
-
-            try {
-                String jrxmlFile = new String("src/Report/peminjaman.jrxml");
-                JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
-                JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(resultQueryListBorrows));
-                JasperViewer.viewReport(jp, false);
-            } catch (JRException ex) {
-                System.out.println(ex.getMessage());
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            if (resultQueryListBorrows.size() > 0) {
+                try {
+                    String jrxmlFile = new String("src/Report/peminjaman.jrxml");
+                    JasperReport jr = JasperCompileManager.compileReport(jrxmlFile);
+                    JasperPrint jp = JasperFillManager.fillReport(jr, parameters, new JRBeanCollectionDataSource(resultQueryListBorrows));
+                    JasperViewer.viewReport(jp, false);
+                } catch (JRException ex) {
+                    System.out.println(ex.getMessage());
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                this.peringatan("Data tidak ditemukan!");
             }
         } else if (filterPrintType.getSelectedIndex() == 1) {
             Query resultSet = entityManager.createNativeQuery("SELECT books.judul, borrows.books_id, COUNT(borrows.books_id) AS jumlah_peminjaman FROM borrows JOIN books ON books.book_id = borrows.books_id WHERE EXTRACT(MONTH FROM borrows.created_at) = ? AND EXTRACT(YEAR FROM borrows.created_at) = ? GROUP BY borrows.books_id, books.judul ORDER BY jumlah_peminjaman DESC LIMIT 10;");
@@ -399,6 +429,36 @@ public class Peminjaman extends javax.swing.JPanel {
         // TODO add your handling code here:
         new FormPeminjamanSkripsi(this, this.userId).setVisible(true);
     }//GEN-LAST:event_btnTambahPeminjamSkripsiActionPerformed
+
+    private void inputSearchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_inputSearchFocusGained
+        // TODO add your handling code here:
+        if (searchBy.getSelectedIndex() != 0) {
+            if (inputSearch.getText().equalsIgnoreCase("search")) {
+                inputSearch.setText("");
+            }
+        }
+    }//GEN-LAST:event_inputSearchFocusGained
+
+    private void inputSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_inputSearchFocusLost
+        // TODO add your handling code here:
+        if (searchBy.getSelectedIndex() != 0) {
+            if (inputSearch.getText().equals("")) {
+                inputSearch.setText("Search");
+            }
+        }
+    }//GEN-LAST:event_inputSearchFocusLost
+
+    private void searchByItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_searchByItemStateChanged
+        // TODO add your handling code here:
+        int filter = searchBy.getSelectedIndex();
+        if (filter == 0) {
+            inputSearch.setEditable(false);
+        } else {
+            inputSearch.setEditable(true);
+        }
+        loadTable();
+
+    }//GEN-LAST:event_searchByItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
